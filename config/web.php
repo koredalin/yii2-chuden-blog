@@ -43,19 +43,17 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
+            // 'showScriptName' => false,
+            // 'rules' => [
+            // ],
         ],
-        */
     ],
 	'modules' => [
 		'user' => [
 			'class' => 'dektrium\user\Module',
-			'enableUnconfirmedLogin' => false,
+			'enableUnconfirmedLogin' => true,
 			'confirmWithin' => 21600,
 			'cost' => 12,
 			'admins' => $params['admins']
