@@ -7,6 +7,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\captcha\Captcha;
+use cinghie\cookieconsent\widgets\CookieWidget;
 
 $this->title = 'Contact';
 $this->params['breadcrumbs'][] = $this->title;
@@ -66,3 +67,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php endif; ?>
 </div>
+
+<?= CookieWidget::widget([ 
+	'message' => 'This website uses cookies to ensure you get the best experience on our website.',
+	'dismiss' => 'Got It',
+	'learnMore' => 'More info',
+	'link' => 'http://silktide.com/privacy-policy',
+	'theme' => 'dark-bottom'
+]); ?>

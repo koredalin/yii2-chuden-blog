@@ -3,16 +3,24 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Html;
+use cinghie\cookieconsent\widgets\CookieWidget;
 
-$this->title = 'About';
+$this->title = 'About Chuden Blog';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        This is the About page. You may modify the following file to customize its content:
+        Author Hristo Hristov. koredalin@yahoo.com.
     </p>
 
-    <code><?= __FILE__ ?></code>
 </div>
+
+<?= CookieWidget::widget([ 
+	'message' => 'This website uses cookies to ensure you get the best experience on our website.',
+	'dismiss' => 'Got It',
+	'learnMore' => 'More info',
+	'link' => 'http://silktide.com/privacy-policy',
+	'theme' => 'dark-bottom'
+]); ?>
