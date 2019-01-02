@@ -3,11 +3,13 @@
 namespace app\controllers\blog;
 
 use Yii;
+use yii\web\Controller;
+use yii\filters\AccessControl;
+use dektrium\user\filters\AccessRule;
+use yii\filters\VerbFilter;
 use app\models\BlogPostRating;
 use app\models\search\BlogPostRatingSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * PostratingController implements the CRUD actions for BlogPostRating model.
@@ -20,6 +22,25 @@ class PostratingController extends Controller
     public function behaviors()
     {
         return [
+			'access' => [
+				'class' => AccessControl::className(),
+			    'ruleConfig' => [
+			        'class' => AccessRule::className(),
+			    ],
+				'only' => ['create', 'update', 'delete', 'view', 'index'],
+				'rules' => [
+					[
+						'actions' => ['create', 'update', 'delete'],
+						'allow' => true,
+						'roles' => ['?', '@', 'admin'],
+					],
+					[
+						'actions' => ['view', 'index'],
+						'allow' => true,
+						'roles' => ['admin'],
+					],
+				],
+			],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

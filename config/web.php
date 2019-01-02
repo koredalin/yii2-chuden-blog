@@ -46,8 +46,10 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             // 'showScriptName' => false,
-            // 'rules' => [
-            // ],
+            'rules' => [
+//                '/blog/post/<id:\d+>/<language:^[a-z]{2}\-[a-z]{2}$>/<slug:^[a-z]+[\-[a-z]+]*$>' => '/blog/post/page',
+                '/blog/post/<id:\d+>/<language:[a-z]{2}\-[a-z]{2}>/<slug:[a-z0-9]{1}[\-[a-z0-9]+]*>' => '/blog/post/page',
+            ],
         ],
     ],
 	'modules' => [

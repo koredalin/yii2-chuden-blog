@@ -3,11 +3,14 @@
 namespace app\controllers\blog;
 
 use Yii;
+use yii\web\Controller;
+use yii\filters\AccessControl;
+use dektrium\user\filters\AccessRule;
+use yii\filters\VerbFilter;
+use yii\behaviors\SluggableBehavior;
 use app\models\BlogPost;
 use app\models\search\BlogPostSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * PostController implements the CRUD actions for BlogPost model.
@@ -19,14 +22,52 @@ class PostController extends Controller
      */
     public function behaviors()
     {
+        // TODO - https://code.tutsplus.com/tutorials/how-to-program-with-yii2-sluggable-behavior--cms-23222
         return [
+			'access' => [
+				'class' => AccessControl::className(),
+			    'ruleConfig' => [
+			        'class' => AccessRule::className(),
+			    ],
+				'only' => ['create', 'update', 'delete', 'view', 'index'],
+				'rules' => [
+					[
+						'actions' => ['view', 'index'],
+						'allow' => true,
+						'roles' => ['?', '@', 'admin'],
+					],
+					[
+						'actions' => ['create', 'update', 'delete'],
+						'allow' => true,
+						'roles' => ['admin'],
+					],
+				],
+			],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                 ],
             ],
+            [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'mesage',
+                // 'slugAttribute' => 'slug', // Not needed.
+            ],
         ];
+    }
+    
+    public function getPageRoute(BlogPost $model)
+    {
+        if (!isset($model->id) || !isset($model->slug)) {
+            return ['/blog/post'];
+        }
+        return ['/blog/post/page', 'id'=>$model->id, 'slug'=>$model->slug];
+    }
+
+    public function getPageUrl()
+    {
+        return \yii\helpers\Url::to($this->getPageRoute());
     }
 
     /**
@@ -54,6 +95,36 @@ class PostController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Displays a single Forecast model.
+     * @param string $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionPage($id, $language, $slug)
+    {
+            echo $id . ' ' . $language . ' ' . $slug; exit;
+        
+        $model = $this->findModel((int) $id);
+        return $this->getPageUrl($model);
+        $isAdmin = !Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin;
+        if ((int) $model->published != 1 && !$isAdmin) {
+            return $this->redirect(['/forecast/list']);
+        }
+        $this->needSubscription($model);
+        Yii::$app->language = trim($model->language);
+        $alterLangsModels = $model::find()->getAlternativeLanguages($model->game_id, $model->language);
+        $forecastsSubscriptionsNumber = (int)Subscription::find()->getForecastsSubscriptionsNumber()['total_forecasts_subscribed_emails'];
+        $commentModel = new PredictionComment();
+        
+        return $this->render('page', [
+            'model' => $model,
+            'commentModel' => $commentModel,
+            'alterLangsModels' => $alterLangsModels,
+            'forecastsSubscriptionsNumber' => $forecastsSubscriptionsNumber,
         ]);
     }
 
@@ -119,6 +190,27 @@ class PostController extends Controller
     protected function findModel($id)
     {
         if (($model = BlogPost::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    /**
+     * Finds the BlogPost model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return BlogPost the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findPageModel($id, $language, $slug)
+    {
+        $language = trim($language);
+        if (strlen($language) != 5) {
+            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        }
+        $language = strtolower(substr($language, 0, 2)) . '-' . strtoupper(substr($language, 0, -2));
+        if (($model = BlogPost::find(['id' => (int)$id, 'language' => $language, 'slug' => strtolower(trim($slug))])) !== null) {
             return $model;
         }
 

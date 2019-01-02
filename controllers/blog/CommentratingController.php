@@ -3,11 +3,13 @@
 namespace app\controllers\blog;
 
 use Yii;
+use yii\web\Controller;
+use yii\filters\AccessControl;
+use dektrium\user\filters\AccessRule;
+use yii\filters\VerbFilter;
 use app\models\BlogCommentRating;
 use app\models\search\BlogCommentRatingSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * CommentratingController implements the CRUD actions for BlogCommentRating model.
@@ -20,6 +22,25 @@ class CommentratingController extends Controller
     public function behaviors()
     {
         return [
+			'access' => [
+				'class' => AccessControl::className(),
+			    'ruleConfig' => [
+			        'class' => AccessRule::className(),
+			    ],
+				'only' => ['create', 'update', 'delete', 'view', 'index'],
+				'rules' => [
+					[
+						'actions' => ['create', 'update', 'delete'],
+						'allow' => true,
+						'roles' => ['?', '@', 'admin'],
+					],
+					[
+						'actions' => ['view', 'index'],
+						'allow' => true,
+						'roles' => ['admin'],
+					],
+				],
+			],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -27,6 +48,15 @@ class CommentratingController extends Controller
                 ],
             ],
         ];
+    }
+    
+    private function isAuthorizedUser(BlogCommentRating $model)
+    {
+        $isAdmin = Yii::$app->user->identity->isAdmin;
+        if ($isAdmin || (int)$model->user->id == (int)Yii::$app->user->identity->id) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -52,8 +82,12 @@ class CommentratingController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        if (!$this->isAuthorizedUser($model)) {
+            $this->redirect(['/blog/post']);
+        }
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -85,6 +119,9 @@ class CommentratingController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if (!$this->isAuthorizedUser($model)) {
+            $this->redirect(['/blog/post']);
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
