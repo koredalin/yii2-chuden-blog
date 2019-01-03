@@ -63,7 +63,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; <a target="_blank" href="https://github.com/koredalin/yii2-chuden-blog">Hristo Hristov 2018-<?= date('Y') ?></a></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>

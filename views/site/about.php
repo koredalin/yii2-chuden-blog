@@ -11,9 +11,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="site-about">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        Author Hristo Hristov. koredalin@yahoo.com.
-    </p>
+    <p>Author <a target="_blank" href="https://github.com/koredalin">Hristo Hristov</a>.</p>
+    <p>E-mail: <a href="mailto:koredalin@yahoo.com">koredalin@yahoo.com</a>.</p>
+    <p>Github repository: <a target="_blank" href="https://github.com/koredalin/yii2-chuden-blog">Chuden Blog</a>.</p>
 
 </div>
 
