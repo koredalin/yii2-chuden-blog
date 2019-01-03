@@ -6,7 +6,7 @@
     <br>
 </p>
 
-Yii 2 Basic Template Blog. Still in development.
+Yii 2 Basic Template Blog. **Still in development.**
 
 A simple Blog for Yii2 Basic Template application.
 
