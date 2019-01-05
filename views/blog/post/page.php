@@ -100,16 +100,16 @@ if (in_array($ctrlAct, array('/blog/post-addcomment', '/blog/post-updatecomment'
 <?php
 } else {
     $needLogin = \Yii::$app->user->isGuest ? ' '.Yii::t('app', '/Log-in needed/') : '';
-    echo '<div>' . Html::a(Yii::t('app', 'Add a comment').$needLogin, ['/forecast/addcomment', 'id' => (int)$model->id,], ['class' => 'btn btn-primary']) . '</div>' . PHP_EOL;
+    echo '<div>' . Html::a(Yii::t('app', 'Add a comment').$needLogin, ['/blog/post/addcomment', 'id' => (int)$model->id,], ['class' => 'btn btn-primary']) . '</div>' . PHP_EOL;
 }
 ?>
 
 <hr>
 
 <?php
-$comments = $commentModel->find()->getAllPostComments($model->id);
+$parentComments = $commentModel->find()->getParentPostComments($model->id);
 $adminUsernames = \Yii::$app->getModule('user')->admins;
-foreach ($comments as $key => $comment) {
+foreach ($parentComments as $key => $comment) {
     $currUsername = $comment->user->username;
 ?>
     <div class="comment">
@@ -125,12 +125,12 @@ foreach ($comments as $key => $comment) {
         <span class="comment-actions inline-block">
             <?php if (!\Yii::$app->user->isGuest && (\Yii::$app->user->identity->id == $comment->user->id || \Yii::$app->user->identity->isAdmin)) {
                 echo Html::a('<span class="glyphicon glyphicon-pencil"></span>',
-                        ['/forecast/updatecomment', 'id' => $model->id, 'prediction_comment_id' => (int)$comment->id], 
-                        ['title' => 'Edit comment', 'data-pjax' => '0',]
+                        ['/blog/post/updatecomment', 'id' => $model->id, 'prediction_comment_id' => (int)$comment->id], 
+                        ['title' => Yii::t('app', 'Edit comment'), 'data-pjax' => '0',]
                     ) . PHP_EOL;
                 echo Html::a('<span class="glyphicon glyphicon-remove"></span>',
-                        ['/forecast/deletecomment', 'id' => $model->id, 'prediction_comment_id' => (int)$comment->id], 
-                        ['title' => 'Delete comment', 'data-pjax' => '0',]
+                        ['/blog/post/deletecomment', 'id' => $model->id, 'prediction_comment_id' => (int)$comment->id], 
+                        ['title' => Yii::t('app', 'Delete comment'), 'data-pjax' => '0',]
                     ) . PHP_EOL;
             } ?>
         </span>

@@ -113,7 +113,6 @@ class PostController extends Controller
         if ((int) $model->published != 1 && !$isAdmin) {
             return $this->redirect(['/blog/post']);
         }
-//        $this->needSubscription($model);
         Yii::$app->language = trim($model->language);
         $alterLangsModels = $model::find()->getAlternativeLanguages($model->slug, $model->language);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();

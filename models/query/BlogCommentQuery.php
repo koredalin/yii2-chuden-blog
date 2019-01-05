@@ -32,9 +32,17 @@ class BlogCommentQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
     
-    public function getAllPostComments($blog_post_id)
+    public function getParentPostComments($blog_post_id)
+    {
+        return $this->where(['blog_post_id' => (int)$blog_post_id, 'parent_id' => null])
+                ->orderBy(['created_at' => SORT_DESC])->all();
+    }
+    
+    public function getHeirPostComments($blog_post_id)
     {
         return $this->where(['blog_post_id' => (int)$blog_post_id])
-                ->orderBy(['updated_at' => SORT_DESC])->all();
+                ->andWhere(['NOT', ['parent_id' => 'null']])
+                ->groupBy(['parent_id'])
+                ->orderBy(['created_at' => SORT_ASC])->all();
     }
 }
