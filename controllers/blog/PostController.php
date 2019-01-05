@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use yii\behaviors\SluggableBehavior;
 use app\models\BlogPost;
 use app\models\search\BlogPostSearch;
+use app\models\BlogComment;
 use app\models\BlogSubscription;
 use yii\web\NotFoundHttpException;
 
@@ -112,7 +113,7 @@ class PostController extends Controller
         if ((int) $model->published != 1 && !$isAdmin) {
             return $this->redirect(['/blog/post']);
         }
-        $this->needSubscription($model);
+//        $this->needSubscription($model);
         Yii::$app->language = trim($model->language);
         $alterLangsModels = $model::find()->getAlternativeLanguages($model->slug, $model->language);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
@@ -156,6 +157,8 @@ class PostController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save(false);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

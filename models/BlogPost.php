@@ -28,6 +28,7 @@ class BlogPost extends \yii\db\ActiveRecord
 {
     const NOT_PUBLISHED = 0;
     const PUBLISHED = 1;
+    
     /**
      * {@inheritdoc}
      */

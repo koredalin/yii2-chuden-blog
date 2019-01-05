@@ -13,9 +13,10 @@ $this->title = Yii::t('app', $model->title);
 //var_dump($this->title); exit;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Blog Posts'), 'url' => ['/blog/post']];
 $this->params['breadcrumbs'][] = $this->title;
+$brand = \Yii::$app->params['brand'];
 $this->registerMetaTag([
     'name' => 'description',
-    'content' =>  \Yii::$app->params['brand'] . ' | ' . Yii::t('app', $model->description),
+    'content' =>  $brand . ' | ' . Yii::t('app', $model->content),
 ]);
 ?>
 
@@ -71,11 +72,11 @@ $this->registerMetaTag([
     </div>
     <?php
     echo '<h1>' . Html::encode($this->title) . '</h1>' . PHP_EOL;
-    $this->title .= $title . ' | ' . \Yii::$app->params['brand'];
+    $this->title .= ' | ' . \Yii::$app->params['brand'];
     ?>
     <h2><?php echo Yii::t('app', 'Blog Post information') . ':'; ?></h2>
     <ul id="forecast_match_info">
-        <li><?php echo Yii::t('app', 'Category'); ?>: <strong><?php echo $model->category->name; ?></strong></li>
+        <li><?php echo Yii::t('app', 'Category'); ?>: <strong><?php echo $model->blogCategory->name; ?></strong></li>
         <li><?php echo Yii::t('app', 'Post created at'); ?>: <strong><?php echo $model->created_at; ?></strong></li>
         <li><?php echo Yii::t('app', 'Post last update'); ?>: <strong><?php echo Yii::t('app', $model->updated_at); ?></strong></li>
     </ul>
@@ -86,18 +87,16 @@ $this->registerMetaTag([
 
 <?php
 $ctrlAct = \Yii::$app->controller->id . '-' . \Yii::$app->controller->action->id;
-if (in_array($ctrlAct, array('forecast-addcomment', 'forecast-updatecomment'), true)) {
+if (in_array($ctrlAct, array('/blog/post-addcomment', '/blog/post-updatecomment'), true)) {
 ?>
-
-<?php $form = ActiveForm::begin(); ?>
-<?= $form->field($commentModel, 'content')->textarea(['rows' => 6]) ?>
-<div>Click the captcha image to change it.</div>
-<?php echo $form->field($commentModel, 'verifyCode')->widget(Captcha::className()); ?>
-<div class="form-group">
-    <?= Html::submitButton(Yii::t('app', 'Add Comment'), ['class' => 'btn btn-success']) ?>
-</div>
-<?php ActiveForm::end(); ?>
-
+    <?php $form = ActiveForm::begin(); ?>
+    <?= $form->field($commentModel, 'content')->textarea(['rows' => 6]) ?>
+    <div>Click the captcha image to change it.</div>
+    <?php echo $form->field($commentModel, 'verifyCode')->widget(Captcha::className()); ?>
+    <div class="form-group">
+        <?= Html::submitButton(Yii::t('app', 'Add Comment'), ['class' => 'btn btn-success']) ?>
+    </div>
+    <?php ActiveForm::end(); ?>
 <?php
 } else {
     $needLogin = \Yii::$app->user->isGuest ? ' '.Yii::t('app', '/Log-in needed/') : '';
@@ -108,7 +107,7 @@ if (in_array($ctrlAct, array('forecast-addcomment', 'forecast-updatecomment'), t
 <hr>
 
 <?php
-$comments = $commentModel->find()->where(['prediction_id' => (int)$model->id])->orderBy(['updated_at' => SORT_DESC])->all();
+$comments = $commentModel->find()->getAllPostComments($model->id);
 $adminUsernames = \Yii::$app->getModule('user')->admins;
 foreach ($comments as $key => $comment) {
     $currUsername = $comment->user->username;
@@ -116,7 +115,7 @@ foreach ($comments as $key => $comment) {
     <div class="comment">
         <span class="comment-username inline-block">
             <?php if (in_array($currUsername, $adminUsernames)) {
-                echo '<div class="blog-comment-domain"><em>Score Predictor</em></div>'.PHP_EOL;
+                echo '<div class="blog-comment-domain"><em>'.$brand.'</em></div>'.PHP_EOL;
             } ?>
             <div><strong><?php echo $currUsername; ?></strong></div>
         </span>

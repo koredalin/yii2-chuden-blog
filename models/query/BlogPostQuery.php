@@ -44,12 +44,20 @@ class BlogPostQuery extends \yii\db\ActiveQuery
     public function getPreviousPost($currentPostId)
     {
         return $this->where(['<', 'id', (int)$currentPostId])
-                ->max('id')->one();
+                ->andWhere(['>', 'id', 0])->max('id');
+        if (isset($query)) {
+            return $query->one();
+        }
+        return null;
     }
     
     public function getNextPost($currentPostId)
     {
-        return $this->where(['>', 'id', (int)$currentPostId])
-                ->min('id')->one();
+        $query = $this->where(['>', 'id', (int)$currentPostId])
+                ->andWhere(['>', 'id', 0])->min('id');
+        if (isset($query)) {
+            return $query->one();
+        }
+        return null;
     }
 }

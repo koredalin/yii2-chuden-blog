@@ -31,4 +31,10 @@ class BlogCommentQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+    
+    public function getAllPostComments($blog_post_id)
+    {
+        return $this->where(['blog_post_id' => (int)$blog_post_id])
+                ->orderBy(['updated_at' => SORT_DESC])->all();
+    }
 }

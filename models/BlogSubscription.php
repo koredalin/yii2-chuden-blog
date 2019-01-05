@@ -10,6 +10,8 @@ use Yii;
  * @property string $id
  * @property int $user_id
  * @property string $language
+ * @property string $created_at
+ * @property string $updated_at
  *
  * @property User $user
  */
@@ -33,6 +35,7 @@ class BlogSubscription extends \yii\db\ActiveRecord
             [['user_id'], 'integer'],
             [['language'], 'string'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -45,6 +48,8 @@ class BlogSubscription extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'user_id' => Yii::t('app', 'User ID'),
             'language' => Yii::t('app', 'Language'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'updated_at' => Yii::t('app', 'Updated At'),
         ];
     }
 

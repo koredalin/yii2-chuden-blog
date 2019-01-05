@@ -87,6 +87,8 @@ class CategoryController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save(false);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
