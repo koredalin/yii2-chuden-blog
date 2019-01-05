@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use yii\behaviors\SluggableBehavior;
 use app\models\BlogPost;
 use app\models\search\BlogPostSearch;
+use app\models\BlogSubscription;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -29,10 +30,10 @@ class PostController extends Controller
 			    'ruleConfig' => [
 			        'class' => AccessRule::className(),
 			    ],
-				'only' => ['create', 'update', 'delete', 'view', 'index'],
+				'only' => ['create', 'update', 'delete', 'view', 'index', 'page'],
 				'rules' => [
 					[
-						'actions' => ['view', 'index'],
+						'actions' => ['view', 'index', 'page'],
 						'allow' => true,
 						'roles' => ['?', '@', 'admin'],
 					],
@@ -65,9 +66,9 @@ class PostController extends Controller
         return ['/blog/post/page', 'id'=>$model->id, 'slug'=>$model->slug];
     }
 
-    public function getPageUrl()
+    public function getPageUrl(BlogPost $model)
     {
-        return \yii\helpers\Url::to($this->getPageRoute());
+        return \yii\helpers\Url::to($this->getPageRoute($model));
     }
 
     /**
@@ -106,25 +107,22 @@ class PostController extends Controller
      */
     public function actionPage($id, $language, $slug)
     {
-            echo $id . ' ' . $language . ' ' . $slug; exit;
-        
-        $model = $this->findModel((int) $id);
-        return $this->getPageUrl($model);
+        $model = $this->findPageModel($id, $language, $slug);
         $isAdmin = !Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin;
         if ((int) $model->published != 1 && !$isAdmin) {
-            return $this->redirect(['/forecast/list']);
+            return $this->redirect(['/blog/post']);
         }
         $this->needSubscription($model);
         Yii::$app->language = trim($model->language);
-        $alterLangsModels = $model::find()->getAlternativeLanguages($model->game_id, $model->language);
-        $forecastsSubscriptionsNumber = (int)Subscription::find()->getForecastsSubscriptionsNumber()['total_forecasts_subscribed_emails'];
-        $commentModel = new PredictionComment();
+        $alterLangsModels = $model::find()->getAlternativeLanguages($model->slug, $model->language);
+        $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
+        $commentModel = new BlogComment();
         
         return $this->render('page', [
             'model' => $model,
             'commentModel' => $commentModel,
             'alterLangsModels' => $alterLangsModels,
-            'forecastsSubscriptionsNumber' => $forecastsSubscriptionsNumber,
+            'subscriptionsNumber' => $subscriptionsNumber,
         ]);
     }
 
@@ -209,8 +207,8 @@ class PostController extends Controller
         if (strlen($language) != 5) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
-        $language = strtolower(substr($language, 0, 2)) . '-' . strtoupper(substr($language, 0, -2));
-        if (($model = BlogPost::find(['id' => (int)$id, 'language' => $language, 'slug' => strtolower(trim($slug))])) !== null) {
+        $language = strtolower(substr($language, 0, 2)) . '-' . strtoupper(substr($language, -2));
+        if (($model = BlogPost::find()->where(['id' => (int)$id, 'language' => $language, 'slug' => strtolower(trim($slug))])->one()) !== null) {
             return $model;
         }
 

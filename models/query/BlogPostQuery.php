@@ -2,6 +2,8 @@
 
 namespace app\models\query;
 
+use app\models\BlogPost;
+
 /**
  * This is the ActiveQuery class for [[\app\models\BlogPost]].
  *
@@ -30,5 +32,24 @@ class BlogPostQuery extends \yii\db\ActiveQuery
     public function one($db = null)
     {
         return parent::one($db);
+    }
+    
+    public function getAlternativeLanguages($slug, $language)
+    {
+        return $this->where(['slug' => (int)$slug])
+                ->andWhere(['!=', 'language', $language])
+                ->andWhere(['published' => BlogPost::PUBLISHED])->all();
+    }
+    
+    public function getPreviousPost($currentPostId)
+    {
+        return $this->where(['<', 'id', (int)$currentPostId])
+                ->max('id')->one();
+    }
+    
+    public function getNextPost($currentPostId)
+    {
+        return $this->where(['>', 'id', (int)$currentPostId])
+                ->min('id')->one();
     }
 }
