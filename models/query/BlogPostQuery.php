@@ -43,7 +43,7 @@ class BlogPostQuery extends \yii\db\ActiveQuery
     
     public function getPreviousPost($currentPostId)
     {
-        return $this->where(['<', 'id', (int)$currentPostId])
+        $query = $this->where(['<', 'id', (int)$currentPostId])
                 ->andWhere(['>', 'id', 0])->max('id');
         if (isset($query)) {
             return $query->one();

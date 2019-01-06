@@ -9,6 +9,8 @@ use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
 use app\models\BlogComment;
 use app\models\search\BlogCommentSearch;
+use app\models\BlogPost;
+use app\models\BlogSubscription;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -27,7 +29,7 @@ class CommentController extends Controller
 			    'ruleConfig' => [
 			        'class' => AccessRule::className(),
 			    ],
-				'only' => ['create', 'update', 'delete', 'view', 'index'],
+				'only' => ['create', 'update', 'delete', 'defaultcreate', 'defaultupdate', 'defaultdelete', 'view', 'index'],
 				'rules' => [
 					[
 						'actions' => ['create', 'update', 'delete'],
@@ -35,7 +37,7 @@ class CommentController extends Controller
 						'roles' => ['?', '@', 'admin'],
 					],
 					[
-						'actions' => ['view', 'index'],
+						'actions' => ['defaultcreate', 'defaultupdate', 'defaultdelete', 'view', 'index'],
 						'allow' => true,
 						'roles' => ['admin'],
 					],
@@ -96,13 +98,88 @@ class CommentController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($blog_post_id)
+    {
+        $model = new BlogComment();
+        $postModel = BlogPost::findOne($blog_post_id);
+        if (!isset($postModel)) {
+            $this->redirect(['/blog/post']);
+        }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+        }
+        Yii::$app->language = trim($model->language);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($model->slug, $model->language);
+        $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
+        
+        return $this->render('/blog/post/page', [
+            'model' => $postModel,
+            'commentModel' => $model,
+            'alterLangsModels' => $alterLangsModels,
+            'subscriptionsNumber' => $subscriptionsNumber,
+        ]);
+    }
+
+    /**
+     * Updates an existing BlogComment model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $postModel = BlogPost::findOne($model->blog_post_id);
+        if (!isset($model) || !isset($postModel)) {
+            $this->redirect(['/blog/post']);
+        }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save(false);
+            return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+        }
+        Yii::$app->language = trim($model->language);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($model->slug, $model->language);
+        $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
+
+        return $this->render('/blog/post/page', [
+            'model' => $postModel,
+            'commentModel' => $model,
+            'alterLangsModels' => $alterLangsModels,
+            'subscriptionsNumber' => $subscriptionsNumber,
+        ]);
+    }
+
+    /**
+     * Deletes an existing BlogComment model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param string $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+        $postModel = BlogPost::findOne($model->blog_post_id);
+        if (!isset($model) || !isset($postModel)) {
+            $this->redirect(['/blog/post']);
+        }
+        $model->delete();
+
+        return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+    }
+
+    /**
+     * Creates a new BlogComment model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionDefaultcreate()
     {
         $model = new BlogComment();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $model->updated_at = date('Y-m-d H:i:s');
-            $model->save(false);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -118,14 +195,13 @@ class CommentController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionDefaultupdate($id)
     {
         $model = $this->findModel($id);
-        if (!$this->isAuthorizedUser($model)) {
-            $this->redirect(['/blog/post']);
-        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save(false);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -141,11 +217,16 @@ class CommentController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDefaultdelete($id)
     {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    protected function getAssembledPostPageUrl(BlogPost $postModel)
+    {
+        return '/blog/post/'.$postModel->id.'/'.strtolower($postModel->language).'/'.$postModel->slug;
     }
 
     /**

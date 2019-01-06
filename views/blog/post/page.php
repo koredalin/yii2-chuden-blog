@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use kartik\markdown\Markdown;
 use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
+use app\models\BlogComment;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Forecast */
@@ -87,7 +88,7 @@ $this->registerMetaTag([
 
 <?php
 $ctrlAct = \Yii::$app->controller->id . '-' . \Yii::$app->controller->action->id;
-if (in_array($ctrlAct, array('/blog/post-addcomment', '/blog/post-updatecomment'), true)) {
+if (in_array($ctrlAct, array('/blog/comment-create', '/blog/comment-update'), true)) {
 ?>
     <?php $form = ActiveForm::begin(); ?>
     <?= $form->field($commentModel, 'content')->textarea(['rows' => 6]) ?>
@@ -100,17 +101,22 @@ if (in_array($ctrlAct, array('/blog/post-addcomment', '/blog/post-updatecomment'
 <?php
 } else {
     $needLogin = \Yii::$app->user->isGuest ? ' '.Yii::t('app', '/Log-in needed/') : '';
-    echo '<div>' . Html::a(Yii::t('app', 'Add a comment').$needLogin, ['/blog/post/addcomment', 'id' => (int)$model->id,], ['class' => 'btn btn-primary']) . '</div>' . PHP_EOL;
+    echo '<div>' . Html::a(Yii::t('app', 'Add a comment').$needLogin, ['/blog/comment/create', 'blog_post_id' => (int)$model->id,], ['class' => 'btn btn-primary']) . '</div>' . PHP_EOL;
 }
 ?>
 
 <hr>
 
 <?php
-$parentComments = $commentModel->find()->getParentPostComments($model->id);
+$parentComments = BlogComment::find()->getParentPostComments($model->id);
+$heirComments = BlogComment::find()->getHeirPostComments($model->id);
+$rearrangedHeirComments = array();
+foreach ($heirComments as $heirCommentModel) {
+    $rearrangedHeirComments[$heirCommentModel->parent_id] = $heirCommentModel;
+}
 $adminUsernames = \Yii::$app->getModule('user')->admins;
-foreach ($parentComments as $key => $comment) {
-    $currUsername = $comment->user->username;
+foreach ($parentComments as $key => $commentModel) {
+    $currUsername = $commentModel->user->username;
 ?>
     <div class="comment">
         <span class="comment-username inline-block">
@@ -120,16 +126,16 @@ foreach ($parentComments as $key => $comment) {
             <div><strong><?php echo $currUsername; ?></strong></div>
         </span>
         <span class="comment-text inline-block">
-            <?php echo Html::encode($comment->content); ?>
+            <?php echo Html::encode($commentModel->content); ?>
         </span>
         <span class="comment-actions inline-block">
-            <?php if (!\Yii::$app->user->isGuest && (\Yii::$app->user->identity->id == $comment->user->id || \Yii::$app->user->identity->isAdmin)) {
+            <?php if (!\Yii::$app->user->isGuest && (\Yii::$app->user->identity->id == $commentModel->user->id || \Yii::$app->user->identity->isAdmin)) {
                 echo Html::a('<span class="glyphicon glyphicon-pencil"></span>',
-                        ['/blog/post/updatecomment', 'id' => $model->id, 'prediction_comment_id' => (int)$comment->id], 
+                        ['/blog/comment/update', 'id' => $commentModel->id,], 
                         ['title' => Yii::t('app', 'Edit comment'), 'data-pjax' => '0',]
                     ) . PHP_EOL;
                 echo Html::a('<span class="glyphicon glyphicon-remove"></span>',
-                        ['/blog/post/deletecomment', 'id' => $model->id, 'prediction_comment_id' => (int)$comment->id], 
+                        ['/blog/comment/delete', 'id' => $commentModel->id,], 
                         ['title' => Yii::t('app', 'Delete comment'), 'data-pjax' => '0',]
                     ) . PHP_EOL;
             } ?>
