@@ -85,7 +85,7 @@ class CommentController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        if (!$this->isAuthorizedUser($model)) {
+        if (Yii::$app->user->isGuest || !Yii::$app->user->identity->isAdmin) {
             $this->redirect(['/blog/post']);
         }
         return $this->render('view', [
@@ -108,8 +108,8 @@ class CommentController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
         }
-        Yii::$app->language = trim($model->language);
-        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($model->slug, $model->language);
+        Yii::$app->language = trim($postModel->language);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
         
         return $this->render('/blog/post/page', [
@@ -139,8 +139,8 @@ class CommentController extends Controller
             $model->save(false);
             return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
         }
-        Yii::$app->language = trim($model->language);
-        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($model->slug, $model->language);
+        Yii::$app->language = trim($postModel->language);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
 
         return $this->render('/blog/post/page', [
@@ -178,7 +178,6 @@ class CommentController extends Controller
     public function actionDefaultcreate()
     {
         $model = new BlogComment();
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -198,7 +197,6 @@ class CommentController extends Controller
     public function actionDefaultupdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);

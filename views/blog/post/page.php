@@ -7,7 +7,7 @@ use yii\captcha\Captcha;
 use app\models\BlogComment;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Forecast */
+/* @var $model app\models\BlogPost */
 /* @var $form yii\widgets\ActiveForm */
 
 $this->title = Yii::t('app', $model->title);
@@ -88,7 +88,7 @@ $this->registerMetaTag([
 
 <?php
 $ctrlAct = \Yii::$app->controller->id . '-' . \Yii::$app->controller->action->id;
-if (in_array($ctrlAct, array('/blog/comment-create', '/blog/comment-update'), true)) {
+if (in_array($ctrlAct, array('blog/comment-create', 'blog/comment-update'), true)) {
 ?>
     <?php $form = ActiveForm::begin(); ?>
     <?= $form->field($commentModel, 'content')->textarea(['rows' => 6]) ?>
@@ -117,34 +117,10 @@ foreach ($heirComments as $heirCommentModel) {
 $adminUsernames = \Yii::$app->getModule('user')->admins;
 foreach ($parentComments as $key => $commentModel) {
     $currUsername = $commentModel->user->username;
-?>
-    <div class="comment">
-        <span class="comment-username inline-block">
-            <?php if (in_array($currUsername, $adminUsernames)) {
-                echo '<div class="blog-comment-domain"><em>'.$brand.'</em></div>'.PHP_EOL;
-            } ?>
-            <div><strong><?php echo $currUsername; ?></strong></div>
-        </span>
-        <span class="comment-text inline-block">
-            <?php echo Html::encode($commentModel->content); ?>
-        </span>
-        <span class="comment-actions inline-block">
-            <?php if (!\Yii::$app->user->isGuest && (\Yii::$app->user->identity->id == $commentModel->user->id || \Yii::$app->user->identity->isAdmin)) {
-                echo Html::a('<span class="glyphicon glyphicon-pencil"></span>',
-                        ['/blog/comment/update', 'id' => $commentModel->id,], 
-                        ['title' => Yii::t('app', 'Edit comment'), 'data-pjax' => '0',]
-                    ) . PHP_EOL;
-                echo Html::a('<span class="glyphicon glyphicon-remove"></span>',
-                        ['/blog/comment/delete', 'id' => $commentModel->id,], 
-                        ['title' => Yii::t('app', 'Delete comment'), 'data-pjax' => '0',]
-                    ) . PHP_EOL;
-            } ?>
-        </span>
-    </div>
-    <hr>
-<?php } ?>
-
-
-
-
-
+//print_r($commentModel);
+    echo $this->render('/blog/post/print_parent_comment', [
+        'adminUsernames' => $adminUsernames,
+        'currUsername' => $currUsername,
+        'commentModel' => $commentModel
+    ]);
+}

@@ -24,6 +24,8 @@ use Yii;
  */
 class BlogComment extends \yii\db\ActiveRecord
 {
+    public $verifyCode;
+    
     /**
      * {@inheritdoc}
      */
@@ -37,7 +39,7 @@ class BlogComment extends \yii\db\ActiveRecord
      */
     public function rules()
     {
-        return [
+        $rules = [
             [['content', 'user_id', 'blog_post_id'], 'required'],
             [['content'], 'string'],
             [['user_id', 'blog_post_id', 'parent_id'], 'integer'],
@@ -47,6 +49,12 @@ class BlogComment extends \yii\db\ActiveRecord
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlogComment::className(), 'targetAttribute' => ['parent_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
+        $ctrlAct = Yii::$app->controller->id . '-' . Yii::$app->controller->action->id;
+        if (in_array($ctrlAct, array('blog/comment-create', 'blog/comment-update'), true)) {
+            $rules[] = ['verifyCode', 'captcha'];
+        }
+        
+        return $rules;
     }
 
     /**
