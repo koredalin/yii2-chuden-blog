@@ -98,12 +98,21 @@ class CommentController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($blog_post_id)
+    public function actionCreate($blog_post_id, $reply_to_id = 0)
     {
         $model = new BlogComment();
         $postModel = BlogPost::findOne($blog_post_id);
         if (!isset($postModel)) {
             $this->redirect(['/blog/post']);
+        }
+        $model->user_id = (int)Yii::$app->user->identity->id;
+        $model->blog_post_id = (int)$postModel->id;
+        $reply_to_id = (int)$reply_to_id;
+        if ($reply_to_id > 0) {
+            $leadModel = BlogComment::findOne($reply_to_id);
+            if (isset($leadModel)) {
+                $model->parent_id = ($leadModel->parent_id > 0) ? (int)$leadModel->parent_id : (int)$leadModel->id;
+            }
         }
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
@@ -134,6 +143,7 @@ class CommentController extends Controller
         if (!isset($model) || !isset($postModel)) {
             $this->redirect(['/blog/post']);
         }
+//        print_r(Yii::$app->request->post()); exit;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);

@@ -28,7 +28,7 @@ $this->registerMetaTag([
         ['/blog/subscription']);
 ?>
 </div>
-<h4>Help us grow. Number of Free Forecasts Subscriptions: <strong><?php echo (int)$subscriptionsNumber; ?></strong></h4>
+<h4>Help us grow. Number of all subscriptions: <strong><?php echo (int)$subscriptionsNumber; ?></strong></h4>
 
 <div class="game-forecast-view">
     <div id="prev-next-predictions">
@@ -94,18 +94,16 @@ if (in_array($ctrlAct, array('blog/comment-create', 'blog/comment-update'), true
     <?= $form->field($commentModel, 'content')->textarea(['rows' => 6]) ?>
     <div>Click the captcha image to change it.</div>
     <?php echo $form->field($commentModel, 'verifyCode')->widget(Captcha::className()); ?>
-    <div class="form-group">
+    <div class="form-group separator">
         <?= Html::submitButton(Yii::t('app', 'Add Comment'), ['class' => 'btn btn-success']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 <?php
 } else {
     $needLogin = \Yii::$app->user->isGuest ? ' '.Yii::t('app', '/Log-in needed/') : '';
-    echo '<div>' . Html::a(Yii::t('app', 'Add a comment').$needLogin, ['/blog/comment/create', 'blog_post_id' => (int)$model->id,], ['class' => 'btn btn-primary']) . '</div>' . PHP_EOL;
+    echo '<div class="separator">' . Html::a(Yii::t('app', 'Add a comment').$needLogin, ['/blog/comment/create', 'blog_post_id' => (int)$model->id,], ['class' => 'btn btn-primary']) . '</div>' . PHP_EOL;
 }
 ?>
-
-<hr>
 
 <?php
 $parentComments = BlogComment::find()->getParentPostComments($model->id);
@@ -124,16 +122,21 @@ $adminUsernames = \Yii::$app->getModule('user')->admins;
 foreach ($parentComments as $key => $commentModel) {
     $currUsername = $commentModel->user->username;
     echo $this->render('/blog/post/parent_comment', [
+        'model' => $model,
         'adminUsernames' => $adminUsernames,
         'currUsername' => $currUsername,
-        'commentModel' => $commentModel
+        'commentModel' => $commentModel,
+        'brand' => $brand,
     ]);
     if (in_array($commentModel->id, array_keys($rearrangedHeirComments))) {
         foreach ($rearrangedHeirComments[$commentModel->id] as $heirCommentModel) {
+            $currUsername = $heirCommentModel->user->username;
             echo $this->render('/blog/post/heir_comment', [
+                'model' => $model,
                 'adminUsernames' => $adminUsernames,
                 'currUsername' => $currUsername,
-                'commentModel' => $heirCommentModel
+                'commentModel' => $heirCommentModel,
+                'brand' => $brand,
             ]);
         }
     }

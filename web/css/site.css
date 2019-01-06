@@ -113,3 +113,24 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+
+/*Blog Styling*/
+.inline-block {
+	display: inline-block;
+}
+div.separator {
+	padding-bottom: 21px;
+	border-bottom: 1px solid peru;
+}
+div.parent_comment, div.heir_comment {
+	margin: 20px 0;
+	border-bottom: 1px solid peru;
+	font-size: 1.2em;
+}
+.heir_comment span.comment-username {
+	margin-left: 30px;
+}
+.blog-comment-brand {
+	color: #008000;
+}

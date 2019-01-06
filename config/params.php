@@ -2,7 +2,7 @@
 
 return [
 	'admins' => ['owner', 'admin', 'support',],
-    'brand' => 'Blog Brand Name',
+    'brand' => 'Blog Brand',
     'languages' => [
         'bg-BG' => 'Български',
         'en-GB' => 'British English',
