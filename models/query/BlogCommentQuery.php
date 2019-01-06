@@ -41,8 +41,8 @@ class BlogCommentQuery extends \yii\db\ActiveQuery
     public function getHeirPostComments($blog_post_id)
     {
         return $this->where(['blog_post_id' => (int)$blog_post_id])
-                ->andWhere(['NOT', ['parent_id' => 'null']])
-                ->groupBy(['parent_id'])
+//                ->andWhere('`parent_id` IS NOT NULL')
+                ->andWhere(['IS NOT', 'parent_id', null])
                 ->orderBy(['created_at' => SORT_ASC])->all();
     }
 }
