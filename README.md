@@ -20,7 +20,7 @@ General features to fulfill:
 - `SEO Slug friendly URLs` - Init version made
 - `Blog Posts markup creation /Custom Create page/` - TODO
 - `Blog Categories and Posts responsive user friendly indexes` - TODO
-- `Blog Post general view page` - TODO
+- `Blog Post general view page` - Done
 - `Post and Category ratings implementation` - TODO
 	- `Schema.org ratings` - TODO
 - `Make Yii2 extension` - TODO
