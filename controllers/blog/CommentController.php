@@ -109,9 +109,10 @@ class CommentController extends Controller
         $model->blog_post_id = (int)$postModel->id;
         $reply_to_id = (int)$reply_to_id;
         if ($reply_to_id > 0) {
-            $leadModel = BlogComment::findOne($reply_to_id);
+            $leadModel = BlogComment::find()->where(['blog_post_id' => $blog_post_id, 'id' => $reply_to_id])->one();
             if (isset($leadModel)) {
                 $model->parent_id = ($leadModel->parent_id > 0) ? (int)$leadModel->parent_id : (int)$leadModel->id;
+                $model->reply_to_id = (int)$reply_to_id;
             }
         }
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -143,7 +144,6 @@ class CommentController extends Controller
         if (!isset($model) || !isset($postModel)) {
             $this->redirect(['/blog/post']);
         }
-//        print_r(Yii::$app->request->post()); exit;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);

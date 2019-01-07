@@ -13,7 +13,9 @@ use yii\helpers\Html;
         <div><strong><?php echo $currUsername; ?></strong></div>
     </span>
     <span class="comment-text inline-block">
-        <?php echo Html::encode($commentModel->content); ?>
+        <?php 
+        $replyToUsername = (int)$commentModel->reply_to_id > 0 ? trim($commentModel->replyTo->user->username). ', ' : '';
+        echo $replyToUsername . Html::encode($commentModel->content); ?>
     </span>
     <span class="comment-actions inline-block">
         <?php

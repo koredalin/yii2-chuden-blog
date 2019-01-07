@@ -12,6 +12,7 @@ use Yii;
  * @property int $user_id
  * @property string $blog_post_id
  * @property string $parent_id
+ * @property string $reply_to_id
  * @property string $rating
  * @property string $created_at
  * @property string $updated_at
@@ -42,11 +43,12 @@ class BlogComment extends \yii\db\ActiveRecord
         $rules = [
             [['content', 'user_id', 'blog_post_id'], 'required'],
             [['content'], 'string'],
-            [['user_id', 'blog_post_id', 'parent_id'], 'integer'],
+            [['user_id', 'blog_post_id', 'parent_id', 'reply_to_id'], 'integer'],
             [['rating'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['blog_post_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlogPost::className(), 'targetAttribute' => ['blog_post_id' => 'id']],
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlogComment::className(), 'targetAttribute' => ['parent_id' => 'id']],
+            [['reply_to_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlogComment::className(), 'targetAttribute' => ['reply_to_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
         $ctrlAct = Yii::$app->controller->id . '-' . Yii::$app->controller->action->id;
@@ -68,6 +70,7 @@ class BlogComment extends \yii\db\ActiveRecord
             'user_id' => Yii::t('app', 'User ID'),
             'blog_post_id' => Yii::t('app', 'Blog Post ID'),
             'parent_id' => Yii::t('app', 'Parent ID'),
+            'reply_to_id' => Yii::t('app', 'Reply to a Blog Comment ID'),
             'rating' => Yii::t('app', 'Rating'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -88,6 +91,14 @@ class BlogComment extends \yii\db\ActiveRecord
     public function getParent()
     {
         return $this->hasOne(BlogComment::className(), ['id' => 'parent_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReplyTo()
+    {
+        return $this->hasOne(BlogComment::className(), ['id' => 'reply_to_id']);
     }
 
     /**
