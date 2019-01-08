@@ -3,16 +3,16 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\BlogCommentRating */
+/* @var $model app\models\BlogCommentLike */
 
-$this->title = Yii::t('app', 'Update Blog Comment Rating: {name}', [
+$this->title = Yii::t('app', 'Update Blog Comment Like: {name}', [
     'name' => $model->id,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Blog Comment Ratings'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Blog Comment Likes'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
-<div class="blog-comment-rating-update">
+<div class="blog-comment-like-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

@@ -13,7 +13,6 @@ use Yii;
  * @property string $blog_post_id
  * @property string $parent_id
  * @property string $reply_to_id
- * @property string $rating
  * @property string $created_at
  * @property string $updated_at
  *
@@ -21,7 +20,7 @@ use Yii;
  * @property BlogComment $parent
  * @property BlogComment[] $blogComments
  * @property User $user
- * @property BlogCommentRating[] $blogCommentRatings
+ * @property BlogCommentLike[] $blogCommentLikes
  */
 class BlogComment extends \yii\db\ActiveRecord
 {
@@ -44,7 +43,6 @@ class BlogComment extends \yii\db\ActiveRecord
             [['content', 'user_id', 'blog_post_id'], 'required'],
             [['content'], 'string'],
             [['user_id', 'blog_post_id', 'parent_id', 'reply_to_id'], 'integer'],
-            [['rating'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['blog_post_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlogPost::className(), 'targetAttribute' => ['blog_post_id' => 'id']],
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlogComment::className(), 'targetAttribute' => ['parent_id' => 'id']],
@@ -71,7 +69,6 @@ class BlogComment extends \yii\db\ActiveRecord
             'blog_post_id' => Yii::t('app', 'Blog Post ID'),
             'parent_id' => Yii::t('app', 'Parent ID'),
             'reply_to_id' => Yii::t('app', 'Reply to a Blog Comment ID'),
-            'rating' => Yii::t('app', 'Rating'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
@@ -120,9 +117,9 @@ class BlogComment extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBlogCommentRatings()
+    public function getBlogCommentLikes()
     {
-        return $this->hasMany(BlogCommentRating::className(), ['blog_comment_id' => 'id']);
+        return $this->hasMany(BlogCommentLike::className(), ['blog_comment_id' => 'id']);
     }
 
     /**

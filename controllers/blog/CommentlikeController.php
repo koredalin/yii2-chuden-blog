@@ -7,14 +7,15 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
-use app\models\BlogCommentRating;
-use app\models\search\BlogCommentRatingSearch;
+use app\models\BlogPost;
+use app\models\BlogCommentLike;
+use app\models\search\BlogCommentLikeSearch;
 use yii\web\NotFoundHttpException;
 
 /**
- * CommentratingController implements the CRUD actions for BlogCommentRating model.
+ * CommentlikeController implements the CRUD actions for BlogCommentLike model.
  */
-class CommentratingController extends Controller
+class CommentlikeController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -27,15 +28,15 @@ class CommentratingController extends Controller
 			    'ruleConfig' => [
 			        'class' => AccessRule::className(),
 			    ],
-				'only' => ['create', 'update', 'delete', 'view', 'index'],
+				'only' => ['like', 'create', 'update', 'delete', 'view', 'index'],
 				'rules' => [
 					[
-						'actions' => ['create', 'update', 'delete'],
+						'actions' => ['like', 'delete'],
 						'allow' => true,
-						'roles' => ['?', '@', 'admin'],
+						'roles' => ['@', 'admin'],
 					],
 					[
-						'actions' => ['view', 'index'],
+						'actions' => ['create', 'update', 'view', 'index'],
 						'allow' => true,
 						'roles' => ['admin'],
 					],
@@ -49,23 +50,14 @@ class CommentratingController extends Controller
             ],
         ];
     }
-    
-    private function isAuthorizedUser(BlogCommentRating $model)
-    {
-        $isAdmin = Yii::$app->user->identity->isAdmin;
-        if ($isAdmin || (int)$model->user->id == (int)Yii::$app->user->identity->id) {
-            return true;
-        }
-        return false;
-    }
 
     /**
-     * Lists all BlogCommentRating models.
+     * Lists all BlogCommentLike models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new BlogCommentRatingSearch();
+        $searchModel = new BlogCommentLikeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -75,30 +67,26 @@ class CommentratingController extends Controller
     }
 
     /**
-     * Displays a single BlogCommentRating model.
+     * Displays a single BlogCommentLike model.
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
-        if (!$this->isAuthorizedUser($model)) {
-            $this->redirect(['/blog/post']);
-        }
         return $this->render('view', [
-            'model' => $model,
+            'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new BlogCommentRating model.
+     * Creates a new BlogCommentLike model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new BlogCommentRating();
+        $model = new BlogCommentLike();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -109,8 +97,40 @@ class CommentratingController extends Controller
         ]);
     }
 
+    protected function getAssembledPostPageUrl(BlogPost $postModel)
+    {
+        return '/blog/post/'.$postModel->id.'/'.strtolower($postModel->language).'/'.$postModel->slug;
+    }
+    
+    public function actionLike($blog_comment_id)
+    {
+        $model = new BlogCommentLike();
+        $model->user_id = (int)Yii::$app->user->identity->id;
+        $model->blog_comment_id = (int)$blog_comment_id;
+        if ($model->save()) {
+            $postModel = $model->blogComment->blogPost;
+            if (isset($postModel)) {
+                return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+            }
+        }
+        
+        return $this->redirect(['/blog/post']);
+    }
+    
+    public function actionDislike($blog_comment_id)
+    {
+        $model = BlogCommentLike::findOne(['user_id' => (int)Yii::$app->user->identity->id, 'blog_comment_id' => (int)$blog_comment_id]);
+        $postModel = $model->blogComment->blogPost;
+        $model->delete();
+        if (isset($postModel)) {
+            return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+        }
+        
+        return $this->redirect(['/blog/post']);
+    }
+
     /**
-     * Updates an existing BlogCommentRating model.
+     * Updates an existing BlogCommentLike model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $id
      * @return mixed
@@ -119,9 +139,6 @@ class CommentratingController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if (!$this->isAuthorizedUser($model)) {
-            $this->redirect(['/blog/post']);
-        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -133,7 +150,7 @@ class CommentratingController extends Controller
     }
 
     /**
-     * Deletes an existing BlogCommentRating model.
+     * Deletes an existing BlogCommentLike model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $id
      * @return mixed
@@ -147,15 +164,15 @@ class CommentratingController extends Controller
     }
 
     /**
-     * Finds the BlogCommentRating model based on its primary key value.
+     * Finds the BlogCommentLike model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $id
-     * @return BlogCommentRating the loaded model
+     * @return BlogCommentLike the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = BlogCommentRating::findOne($id)) !== null) {
+        if (($model = BlogCommentLike::findOne($id)) !== null) {
             return $model;
         }
 

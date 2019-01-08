@@ -17,9 +17,20 @@ use yii\helpers\Html;
         $replyToUsername = (int)$commentModel->reply_to_id > 0 ? trim($commentModel->replyTo->user->username). ', ' : '';
         echo $replyToUsername . Html::encode($commentModel->content); ?>
     </span>
-    <span class="comment-actions inline-block">
+    <div class="comment-actions">
         <?php
         if (!\Yii::$app->user->isGuest) {
+            if ($isLikedComment) {
+                echo Html::a('<span class="glyphicon glyphicon-thumbs-down"></span>',
+                        ['/blog/commentlike/dislike', 'blog_comment_id' => $commentModel->id], 
+                        ['title' => \Yii::t('app', 'Dislike the comment'), 'data-pjax' => '1',]
+                    ) . PHP_EOL;
+            } else {
+                echo Html::a('<span class="glyphicon glyphicon-thumbs-up"></span>',
+                        ['/blog/commentlike/like', 'blog_comment_id' => $commentModel->id], 
+                        ['title' => \Yii::t('app', 'Like the comment'), 'data-pjax' => '1',]
+                    ) . PHP_EOL;
+            }
             echo Html::a('<span class="glyphicon glyphicon-plus"></span>',
                     ['/blog/comment/create', 'blog_post_id' => $model->id, 'reply_to_id' => $commentModel->id], 
                     ['title' => \Yii::t('app', 'Repy to comment'), 'data-pjax' => '0',]
@@ -36,5 +47,5 @@ use yii\helpers\Html;
             }
         }
         ?>
-    </span>
+    </div>
 </div>

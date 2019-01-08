@@ -179,6 +179,35 @@ class CommentController extends Controller
 
         return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
     }
+    
+    public function actionLike($id, $like = 0)
+    {
+        $model = $this->findModel($id);
+        $postModel = BlogPost::findOne($model->blog_post_id);
+        if (!isset($model) || !isset($postModel)) {
+            $this->redirect(['/blog/post']);
+        }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->save(false);
+            return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+        }
+        Yii::$app->language = trim($postModel->language);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
+        $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
+
+        return $this->render('/blog/post/page', [
+            'model' => $postModel,
+            'commentModel' => $model,
+            'alterLangsModels' => $alterLangsModels,
+            'subscriptionsNumber' => $subscriptionsNumber,
+        ]);
+    }
+    
+    public function actionDislike($id)
+    {
+        
+    }
 
     /**
      * Creates a new BlogComment model.

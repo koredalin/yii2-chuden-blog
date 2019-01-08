@@ -5,24 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "blog_comment_rating".
+ * This is the model class for table "blog_comment_like".
  *
  * @property string $id
- * @property string $blog_comment_id
  * @property int $user_id
- * @property string $rating
+ * @property string $blog_comment_id
  *
  * @property BlogComment $blogComment
  * @property User $user
  */
-class BlogCommentRating extends \yii\db\ActiveRecord
+class BlogCommentLike extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'blog_comment_rating';
+        return 'blog_comment_like';
     }
 
     /**
@@ -31,9 +30,9 @@ class BlogCommentRating extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['blog_comment_id', 'user_id'], 'required'],
-            [['blog_comment_id', 'user_id'], 'integer'],
-            [['rating'], 'number'],
+            [['user_id', 'blog_comment_id'], 'required'],
+            [['user_id', 'blog_comment_id'], 'integer'],
+            [['user_id', 'blog_comment_id'], 'unique', 'targetAttribute' => ['user_id', 'blog_comment_id']],
             [['blog_comment_id'], 'exist', 'skipOnError' => true, 'targetClass' => BlogComment::className(), 'targetAttribute' => ['blog_comment_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -46,9 +45,8 @@ class BlogCommentRating extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'blog_comment_id' => Yii::t('app', 'Blog Comment ID'),
             'user_id' => Yii::t('app', 'User ID'),
-            'rating' => Yii::t('app', 'Rating'),
+            'blog_comment_id' => Yii::t('app', 'Blog Comment ID'),
         ];
     }
 
@@ -70,10 +68,10 @@ class BlogCommentRating extends \yii\db\ActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return \app\models\query\BlogCommentRatingQuery the active query used by this AR class.
+     * @return \app\models\query\BlogCommentLikeQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new \app\models\query\BlogCommentRatingQuery(get_called_class());
+        return new \app\models\query\BlogCommentLikeQuery(get_called_class());
     }
 }

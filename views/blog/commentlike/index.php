@@ -4,20 +4,20 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\search\BlogCommentRatingSearch */
+/* @var $searchModel app\models\search\BlogCommentLikeSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Blog Comment Ratings');
+$this->title = Yii::t('app', 'Blog Comment Likes');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="blog-comment-rating-index">
+<div class="blog-comment-like-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create Blog Comment Rating'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Create Blog Comment Like'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -29,7 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'blog_comment_id',
             'user_id',
-            'rating',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

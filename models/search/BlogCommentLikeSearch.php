@@ -4,12 +4,12 @@ namespace app\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\BlogCommentRating;
+use app\models\BlogCommentLike;
 
 /**
- * BlogCommentRatingSearch represents the model behind the search form of `app\models\BlogCommentRating`.
+ * BlogCommentLikeSearch represents the model behind the search form of `app\models\BlogCommentLike`.
  */
-class BlogCommentRatingSearch extends BlogCommentRating
+class BlogCommentLikeSearch extends BlogCommentLike
 {
     /**
      * {@inheritdoc}
@@ -18,7 +18,6 @@ class BlogCommentRatingSearch extends BlogCommentRating
     {
         return [
             [['id', 'blog_comment_id', 'user_id'], 'integer'],
-            [['rating'], 'number'],
         ];
     }
 
@@ -40,7 +39,7 @@ class BlogCommentRatingSearch extends BlogCommentRating
      */
     public function search($params)
     {
-        $query = BlogCommentRating::find();
+        $query = BlogCommentLike::find();
 
         // add conditions that should always apply here
 
@@ -61,7 +60,6 @@ class BlogCommentRatingSearch extends BlogCommentRating
             'id' => $this->id,
             'blog_comment_id' => $this->blog_comment_id,
             'user_id' => $this->user_id,
-            'rating' => $this->rating,
         ]);
 
         return $dataProvider;

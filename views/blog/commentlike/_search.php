@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\search\BlogCommentRatingSearch */
+/* @var $model app\models\search\BlogCommentLikeSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="blog-comment-rating-search">
+<div class="blog-comment-like-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -23,8 +23,6 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'blog_comment_id') ?>
 
     <?= $form->field($model, 'user_id') ?>
-
-    <?= $form->field($model, 'rating') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

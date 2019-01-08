@@ -121,22 +121,26 @@ foreach ($heirComments as $heirCommentModel) {
 $adminUsernames = \Yii::$app->getModule('user')->admins;
 foreach ($parentComments as $key => $commentModel) {
     $currUsername = $commentModel->user->username;
+    $isLikedComment = in_array($commentModel->id, $userCommentLikeIdsPerPost);
     echo $this->render('/blog/post/parent_comment', [
         'model' => $model,
         'adminUsernames' => $adminUsernames,
         'currUsername' => $currUsername,
         'commentModel' => $commentModel,
         'brand' => $brand,
+        'isLikedComment' => $isLikedComment,
     ]);
     if (in_array($commentModel->id, array_keys($rearrangedHeirComments))) {
         foreach ($rearrangedHeirComments[$commentModel->id] as $heirCommentModel) {
             $currUsername = $heirCommentModel->user->username;
+            $isLikedComment = in_array($heirCommentModel->id, $userCommentLikeIdsPerPost);
             echo $this->render('/blog/post/heir_comment', [
                 'model' => $model,
                 'adminUsernames' => $adminUsernames,
                 'currUsername' => $currUsername,
                 'commentModel' => $heirCommentModel,
                 'brand' => $brand,
+                'isLikedComment' => $isLikedComment,
             ]);
         }
     }
