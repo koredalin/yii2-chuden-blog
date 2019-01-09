@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\controllers\blog\PostController;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\search\BlogPostSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -20,7 +21,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('app', 'Create Blog Post'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?= GridView::widget([
+    <?php
+    
+    echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
@@ -29,7 +32,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'published',
             'language',
-            'slug',
+//            'slug',
+            [// Slug. Link to Post Page.
+                'label' => 'Slug',
+                'attribute' => 'slug',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    $postUrl = PostController::getAssembledPostPageUrl($data);
+                    $result = Html::a($data->slug, [$postUrl], ['data-pjax' => '0',]);
+                    return $result;
+                },
+                ],
             'title',
             //'meta_description',
             //'blog_category_id',

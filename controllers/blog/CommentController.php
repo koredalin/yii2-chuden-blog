@@ -9,6 +9,7 @@ use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
 use app\models\BlogComment;
 use app\models\search\BlogCommentSearch;
+use app\models\BlogCommentLike;
 use app\models\BlogPost;
 use app\models\BlogSubscription;
 use yii\web\NotFoundHttpException;
@@ -121,12 +122,15 @@ class CommentController extends Controller
         Yii::$app->language = trim($postModel->language);
         $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
+        $userCommentLikeIdsPerPost = array_column(BlogCommentLike::find()->getUserCommentLikeIdsPerPost(Yii::$app->user->identity->id, $postModel->id), 'blog_comment_id');
+        !is_array($userCommentLikeIdsPerPost) ? $userCommentLikeIdsPerPost = array() : false;
         
         return $this->render('/blog/post/page', [
             'model' => $postModel,
             'commentModel' => $model,
             'alterLangsModels' => $alterLangsModels,
             'subscriptionsNumber' => $subscriptionsNumber,
+            'userCommentLikeIdsPerPost' => $userCommentLikeIdsPerPost,
         ]);
     }
 
@@ -152,12 +156,15 @@ class CommentController extends Controller
         Yii::$app->language = trim($postModel->language);
         $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
+        $userCommentLikeIdsPerPost = array_column(BlogCommentLike::find()->getUserCommentLikeIdsPerPost(Yii::$app->user->identity->id, $postModel->id), 'blog_comment_id');
+        !is_array($userCommentLikeIdsPerPost) ? $userCommentLikeIdsPerPost = array() : false;
 
         return $this->render('/blog/post/page', [
             'model' => $postModel,
             'commentModel' => $model,
             'alterLangsModels' => $alterLangsModels,
             'subscriptionsNumber' => $subscriptionsNumber,
+            'userCommentLikeIdsPerPost' => $userCommentLikeIdsPerPost,
         ]);
     }
 

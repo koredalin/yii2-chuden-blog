@@ -18,6 +18,13 @@ use yii\helpers\Html;
     <div class="comment-actions">
         <?php
         if (!\Yii::$app->user->isGuest) {
+            $likesNumber = (int)$commentModel->likes;
+            if ($likesNumber == 1) {
+                echo '1 '.\Yii::t('app', 'Like').' ';
+            }
+            if ($likesNumber > 1) {
+                echo $likesNumber.' '.\Yii::t('app', 'Likes').' ';
+            }
             if ($isLikedComment) {
                 echo Html::a('<span class="glyphicon glyphicon-thumbs-down"></span>',
                         ['/blog/commentlike/dislike', 'blog_comment_id' => $commentModel->id], 

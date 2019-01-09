@@ -45,4 +45,9 @@ class BlogCommentLikeQuery extends \yii\db\ActiveQuery
 						->bindValue(':blog_post_id', (int)$blog_post_id)
 						->queryAll();
     }
+    
+    public function countCommentLikes($blog_comment_id)
+    {
+        return (int)$this->where(['blog_comment_id' => (int)$blog_comment_id])->count();
+    }
 }

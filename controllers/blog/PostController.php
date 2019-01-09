@@ -73,6 +73,11 @@ class PostController extends Controller
         return \yii\helpers\Url::to($this->getPageRoute($model));
     }
 
+    public static function getAssembledPostPageUrl(BlogPost $postModel)
+    {
+        return '/blog/post/'.$postModel->id.'/'.strtolower($postModel->language).'/'.$postModel->slug;
+    }
+
     /**
      * Lists all BlogPost models.
      * @return mixed
