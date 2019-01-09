@@ -17,7 +17,7 @@ General features to fulfill:
 
 - `DB schema and migration` - Done
 - `Initial CRUD functionalities` - Done
-- `SEO Slug friendly URLs` - Init version made
+- `SEO Slug friendly URLs` - Done
 - `Blog Posts markup creation /Custom Create page/` - TODO
 - `Blog Categories and Posts responsive user friendly indexes` - TODO
 - `Blog Post general view page` - Done
