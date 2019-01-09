@@ -21,7 +21,8 @@ General features to fulfill:
 - `Blog Posts markup creation /Custom Create page/` - TODO
 - `Blog Categories and Posts responsive user friendly indexes` - TODO
 - `Blog Post general view page` - Done
-- `Post and Category ratings implementation` - TODO
+- `Blog Comment Likes` - Done
+- `Post and ratings implementation` - TODO
 	- `Schema.org ratings` - TODO
 - `Make Yii2 extension` - TODO
 - `Packagist registration` - TODO
