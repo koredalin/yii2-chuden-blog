@@ -120,7 +120,7 @@ a.desc:after {
 	display: inline-block;
 }
 div.separator {
-	padding-bottom: 21px;
+	padding: 21px 0;
 	border-bottom: 1px solid peru;
 }
 div.parent_comment, div.heir_comment {
@@ -134,4 +134,7 @@ div.parent_comment, div.heir_comment {
 }
 .blog-comment-brand {
 	color: #008000;
+}
+.hidden {
+	display: none;
 }

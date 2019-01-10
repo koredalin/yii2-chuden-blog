@@ -1,0 +1,34 @@
+
+	
+/*---------- star rating ----------*/
+/*https://codepen.io/filcp/pen/QvZVOg*/
+.star-rating {
+	display: flex;
+    align-items: center;
+    font-size: 2.2em;
+    justify-content: center;
+    /*margin: -10px auto 10px auto;*/
+}
+.back-stars {
+	display: flex;
+    color: #bb5252;
+    position: relative;
+    text-shadow: 4px 4px 10px #843a3a;
+}
+.front-stars {
+	display: flex;
+    color: #FFBC0B;
+    overflow: hidden;
+    position: absolute;
+    text-shadow: 2px 2px 5px #d29b09;
+    top: 0;
+}
+
+select.movieRatingSelector {
+	margin: 10px auto;
+	padding: 0;
+}
+
+#stars_rating_vote {
+	font-size: 1.5em;
+}

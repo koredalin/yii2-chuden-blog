@@ -76,4 +76,34 @@ class BlogPostRating extends \yii\db\ActiveRecord
     {
         return new \app\models\query\BlogPostRatingQuery(get_called_class());
     }
+    
+    public static function getHtmlRatingStars($rating, $idPrefix = '')
+    {
+        $rating = round($rating, 2);
+        $rating > 5 ? $rating = 5 : false;
+        $rating <= 0 ? $rating = 0 : false;
+        $ratingPercentage = round($rating / 5 * 100, 1);
+        $idPrefix = strtolower(trim($idPrefix));
+        strlen($idPrefix) > 0 ? $idPrefix .= '_' : false;
+        // https://codepen.io/filcp/pen/QvZVOg
+        $htmlStars = 
+            '<div class="star-rating" title="100%">
+                <div class="back-stars">
+                    <i id="'.$idPrefix.'back_star1" class="fa fa-star" aria-hidden="true"></i>
+                    <i id="'.$idPrefix.'back_star2" class="fa fa-star" aria-hidden="true"></i>
+                    <i id="'.$idPrefix.'back_star3" class="fa fa-star" aria-hidden="true"></i>
+                    <i id="'.$idPrefix.'back_star4" class="fa fa-star" aria-hidden="true"></i>
+                    <i id="'.$idPrefix.'back_star5" class="fa fa-star" aria-hidden="true"></i>
+
+                    <div class="front-stars" style="width: '.$ratingPercentage.'%">
+                        <i id="'.$idPrefix.'front_star1" class="fa fa-star" aria-hidden="true"></i>
+                        <i id="'.$idPrefix.'front_star2" class="fa fa-star" aria-hidden="true"></i>
+                        <i id="'.$idPrefix.'front_star3" class="fa fa-star" aria-hidden="true"></i>
+                        <i id="'.$idPrefix.'front_star4" class="fa fa-star" aria-hidden="true"></i>
+                        <i id="'.$idPrefix.'front_star5" class="fa fa-star" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>';
+        return $htmlStars;
+    }
 }

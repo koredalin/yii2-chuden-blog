@@ -30,12 +30,12 @@ use yii\helpers\Html;
             if ($isLikedComment) {
                 echo Html::a('<span class="glyphicon glyphicon-thumbs-down"></span>',
                         ['/blog/commentlike/dislike', 'blog_comment_id' => $commentModel->id], 
-                        ['title' => \Yii::t('app', 'Dislike the comment'), 'data-pjax' => '1',]
+                        ['title' => \Yii::t('app', 'Dislike this comment'), 'data-pjax' => '1',]
                     ) . PHP_EOL;
             } else {
                 echo Html::a('<span class="glyphicon glyphicon-thumbs-up"></span>',
                         ['/blog/commentlike/like', 'blog_comment_id' => $commentModel->id], 
-                        ['title' => \Yii::t('app', 'Like the comment'), 'data-pjax' => '1',]
+                        ['title' => \Yii::t('app', 'Like this comment'), 'data-pjax' => '1',]
                     ) . PHP_EOL;
             }
             echo Html::a('<span class="glyphicon glyphicon-plus"></span>',

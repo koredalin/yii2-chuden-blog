@@ -34,6 +34,9 @@ class BlogCommentLikeQuery extends \yii\db\ActiveQuery
     
     public function getUserCommentLikeIdsPerPost($user_id, $blog_post_id)
     {
+        if (!(int)$user_id || !(int)$blog_post_id) {
+            return array();
+        }
 		$sqlStr = 'SELECT bcl.blog_comment_id
                 FROM blog_comment_like AS bcl
                 WHERE bcl.user_id = :user_id

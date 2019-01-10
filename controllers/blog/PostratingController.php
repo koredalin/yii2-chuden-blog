@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
+use app\controllers\blog\PostController;
 use app\models\BlogPostRating;
 use app\models\search\BlogPostRatingSearch;
 use yii\web\NotFoundHttpException;
@@ -30,12 +31,12 @@ class PostratingController extends Controller
 				'only' => ['create', 'update', 'delete', 'view', 'index'],
 				'rules' => [
 					[
-						'actions' => ['create', 'update', 'delete'],
+						'actions' => ['create', 'update'],
 						'allow' => true,
-						'roles' => ['?', '@', 'admin'],
+						'roles' => ['@', 'admin'],
 					],
 					[
-						'actions' => ['view', 'index'],
+						'actions' => ['view', 'index', 'delete'],
 						'allow' => true,
 						'roles' => ['admin'],
 					],
@@ -83,7 +84,45 @@ class PostratingController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($blog_post_id, $rating)
+    {
+        $model = new BlogPostRating();
+        
+        $model->user_id = Yii::$app->user->identity->id;
+        $model->blog_post_id = (int)$blog_post_id;
+        $model->rating = (int)$rating;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect([PostController::getAssembledPostPageUrl($model->blogPost)]);
+        }
+
+        return $this->redirect(['/blog/post']);
+    }
+
+    /**
+     * Updates an existing BlogPostRating model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param string $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($blog_post_id, $rating)
+    {
+        $model = $this->findModel(['user_id' => Yii::$app->user->identity->id, 'blog_post_id' => (int)$blog_post_id]);
+
+        $model->rating = (int)$rating;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect([PostController::getAssembledPostPageUrl($model->blogPost)]);
+        }
+
+        return $this->redirect(['/blog/post']);
+    }
+
+    /**
+     * Creates a new BlogPostRating model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreatedefault()
     {
         $model = new BlogPostRating();
 
@@ -103,7 +142,7 @@ class PostratingController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdatedefault($id)
     {
         $model = $this->findModel($id);
 

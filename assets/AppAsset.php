@@ -27,5 +27,19 @@ class AppAsset extends AssetBundle
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
+		'rmrevin\yii\fontawesome\CdnProAssetBundle',
     ];
+
+	public function __construct($config = array()) {
+		$this->set_js_files();
+		parent::__construct($config);
+	}
+
+	protected function set_js_files() {
+		$ctrlAct = \Yii::$app->controller->id . '-' . \Yii::$app->controller->action->id;
+		if (in_array($ctrlAct, array('blog/post-page'), true)) {
+			$this->css[] = 'css/blog_post_page.css';
+			$this->js[] = 'js/blog_post_page.js';
+		}
+    }
 }

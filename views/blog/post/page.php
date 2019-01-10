@@ -5,6 +5,7 @@ use kartik\markdown\Markdown;
 use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 use app\models\BlogComment;
+use app\models\BlogPostRating;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\BlogPost */
@@ -30,7 +31,7 @@ $this->registerMetaTag([
 </div>
 <h4>Help us grow. Number of all subscriptions: <strong><?php echo (int)$subscriptionsNumber; ?></strong></h4>
 
-<div class="game-forecast-view">
+<div class="game-forecast-view separator">
     <div id="prev-next-predictions">
         <span class="prev-prediction inline-block">
         <?php
@@ -83,8 +84,21 @@ $this->registerMetaTag([
     </ul>
     <div><?php echo Markdown::convert($model->content) . PHP_EOL; ?></div>
 </div>
-    
-<hr>
+<div id="stars-rating" class="separator">
+    <span id="current_stars_rating" class="inline-block">
+        <?php echo BlogPostRating::getHtmlRatingStars(round($model->rating, 2)); ?>
+    </span>
+    <span id="stars_rating_vote" class="inline-block">
+        <?php if (\Yii::$app->user->isGuest) { ?>
+        <?php echo Html::a('<span class="glyphicon glyphicon-check"></span>'.Yii::t('app', 'Vote for this post'), ['/user/login'], ['class' => 'btn btn-primary', 'title' => \Yii::t('app', 'Need log-in'), 'data-pjax' => '0']); ?>
+        <?php } else { ?>
+            <button type="button" id="logged_stars_vote" class="btn btn-primary"><span class="glyphicon glyphicon-check"></span>Vote for this post</button>
+    </span>
+    <span id="vote_stars_rating" class="hidden">
+        <?php echo BlogPostRating::getHtmlRatingStars(1, 'vote'); ?>
+    </span>
+        <?php } ?>
+</div>
 
 <?php
 $ctrlAct = \Yii::$app->controller->id . '-' . \Yii::$app->controller->action->id;
@@ -100,8 +114,9 @@ if (in_array($ctrlAct, array('blog/comment-create', 'blog/comment-update'), true
     <?php ActiveForm::end(); ?>
 <?php
 } else {
-    $needLogin = \Yii::$app->user->isGuest ? ' '.Yii::t('app', '/Log-in needed/') : '';
-    echo '<div class="separator">' . Html::a(Yii::t('app', 'Add a comment').$needLogin, ['/blog/comment/create', 'blog_post_id' => (int)$model->id,], ['class' => 'btn btn-primary']) . '</div>' . PHP_EOL;
+    $addCommentOptions = ['class' => 'btn btn-primary', 'data-pjax' => '0'];
+    \Yii::$app->user->isGuest ? $addCommentOptions['title'] = \Yii::t('app', 'Need log-in') : false;
+    echo '<div class="separator">' . Html::a(Yii::t('app', 'Add a comment'), ['/blog/comment/create', 'blog_post_id' => (int)$model->id,], $addCommentOptions) . '</div>' . PHP_EOL;
 }
 ?>
 
