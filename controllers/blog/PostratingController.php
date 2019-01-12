@@ -8,6 +8,7 @@ use yii\filters\AccessControl;
 use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
 use app\controllers\blog\PostController;
+use app\models\BlogPost;
 use app\models\BlogPostRating;
 use app\models\search\BlogPostRatingSearch;
 use yii\web\NotFoundHttpException;
@@ -28,15 +29,15 @@ class PostratingController extends Controller
 			    'ruleConfig' => [
 			        'class' => AccessRule::className(),
 			    ],
-				'only' => ['create', 'update', 'delete', 'view', 'index'],
+				'only' => ['vote', 'create', 'update', 'delete', 'view', 'index'],
 				'rules' => [
 					[
-						'actions' => ['create', 'update'],
+						'actions' => ['vote'],
 						'allow' => true,
 						'roles' => ['@', 'admin'],
 					],
 					[
-						'actions' => ['view', 'index', 'delete'],
+						'actions' => ['create', 'update', 'view', 'index', 'delete'],
 						'allow' => true,
 						'roles' => ['admin'],
 					],
@@ -84,14 +85,14 @@ class PostratingController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($blog_post_id, $rating)
+    protected function create($blog_post_id, $rating)
     {
         $model = new BlogPostRating();
-        
         $model->user_id = Yii::$app->user->identity->id;
         $model->blog_post_id = (int)$blog_post_id;
         $model->rating = (int)$rating;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->save()) {
+            $this->updatePostRating($blog_post_id);
             return $this->redirect([PostController::getAssembledPostPageUrl($model->blogPost)]);
         }
 
@@ -105,16 +106,41 @@ class PostratingController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($blog_post_id, $rating)
+    protected function update(BlogPostRating &$model, $rating)
     {
-        $model = $this->findModel(['user_id' => Yii::$app->user->identity->id, 'blog_post_id' => (int)$blog_post_id]);
-
         $model->rating = (int)$rating;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->save()) {
+            $this->updatePostRating($model->blog_post_id);
             return $this->redirect([PostController::getAssembledPostPageUrl($model->blogPost)]);
         }
 
         return $this->redirect(['/blog/post']);
+    }
+    
+    private function updatePostRating($blog_post_id)
+    {
+        $postRating = BlogPostRating::find()->getPostRating($blog_post_id);
+        $postModel = BlogPost::findOne($blog_post_id);
+        $postModel->rating = $postRating;
+        $postModel->updated_at = date('Y-m-d H:i:s');
+        $postModel->save(false);
+    }
+
+    /**
+     * Updates an existing BlogPostRating model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param int $blog_post_id, $rating
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionVote($blog_post_id, $rating)
+    {
+        $model = BlogPostRating::findOne(['user_id' => (int)Yii::$app->user->identity->id, 'blog_post_id' => (int)$blog_post_id]);
+        if (!isset($model)) {
+            return $this->create($blog_post_id, $rating);
+        }
+        
+        return $this->update($model, $rating);
     }
 
     /**
@@ -122,7 +148,7 @@ class PostratingController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreatedefault()
+    public function actionCreate()
     {
         $model = new BlogPostRating();
 
@@ -142,7 +168,7 @@ class PostratingController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdatedefault($id)
+    public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 

@@ -5,7 +5,7 @@ use kartik\markdown\Markdown;
 use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 use app\models\BlogComment;
-use app\models\BlogPostRating;
+use app\views\helpers\HtmlStarsRating;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\BlogPost */
@@ -85,17 +85,18 @@ $this->registerMetaTag([
     <div><?php echo Markdown::convert($model->content) . PHP_EOL; ?></div>
 </div>
 <div id="stars-rating" class="separator">
-    <span id="current_stars_rating" class="inline-block">
-        <?php echo BlogPostRating::getHtmlRatingStars(round($model->rating, 2)); ?>
+    <span id="current_stars_rating" class="">
+        <?php echo HtmlStarsRating::starsRating(round($model->rating, 2)); ?>
     </span>
-    <span id="stars_rating_vote" class="inline-block">
+    <span id="vote_stars_rating_block" class="">
         <?php if (\Yii::$app->user->isGuest) { ?>
         <?php echo Html::a('<span class="glyphicon glyphicon-check"></span>'.Yii::t('app', 'Vote for this post'), ['/user/login'], ['class' => 'btn btn-primary', 'title' => \Yii::t('app', 'Need log-in'), 'data-pjax' => '0']); ?>
         <?php } else { ?>
-            <button type="button" id="logged_stars_vote" class="btn btn-primary"><span class="glyphicon glyphicon-check"></span>Vote for this post</button>
-    </span>
-    <span id="vote_stars_rating" class="hidden">
-        <?php echo BlogPostRating::getHtmlRatingStars(1, 'vote'); ?>
+        <span id="vote_stars_rating" class="hidden">
+            <?php echo HtmlStarsRating::starsRatingVote($model->id); ?>
+        </span>
+        <button type="button" id="logged_stars_vote_button" class="btn btn-primary"><span class="glyphicon glyphicon-check"></span>Vote for this post</button>
+        <button type="button" id="cancel_logged_stars_vote_button" class="btn btn-warning hidden">Cancel vote</button>
     </span>
         <?php } ?>
 </div>

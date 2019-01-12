@@ -31,4 +31,9 @@ class BlogPostRatingQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+    
+    public function getPostRating($blog_post_id)
+    {
+        return round($this->where(['blog_post_id' => (int)$blog_post_id])->average('rating'), 2);
+    }
 }

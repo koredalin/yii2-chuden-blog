@@ -2,20 +2,21 @@
 	
 /*---------- star rating ----------*/
 /*https://codepen.io/filcp/pen/QvZVOg*/
-.star-rating {
+.star-rating,
+.star-rating-vote {
 	display: flex;
     align-items: center;
     font-size: 2.2em;
     justify-content: center;
     /*margin: -10px auto 10px auto;*/
 }
-.back-stars {
+.star-rating .back-stars {
 	display: flex;
     color: #bb5252;
     position: relative;
     text-shadow: 4px 4px 10px #843a3a;
 }
-.front-stars {
+.star-rating .front-stars {
 	display: flex;
     color: #FFBC0B;
     overflow: hidden;
@@ -23,12 +24,22 @@
     text-shadow: 2px 2px 5px #d29b09;
     top: 0;
 }
-
-select.movieRatingSelector {
-	margin: 10px auto;
-	padding: 0;
+#vote_stars_rating_block .star-rating-vote .back-stars {
+	display: flex;
+    color: #FFCD1C;
+    position: relative;
+    text-shadow: 4px 4px 10px #843a3a;
+}
+#vote_stars_rating_block .star-rating-vote .front-stars {
+	display: flex;
+    overflow: hidden;
+    position: absolute;
+    text-shadow: 2px 2px 5px #d29b09;
+    top: -2px;
 }
 
-#stars_rating_vote {
-	font-size: 1.5em;
+#logged_stars_vote_button,
+#cancel_logged_stars_vote_button {
+	margin: 21px auto 0 auto;
+	display: block;
 }
