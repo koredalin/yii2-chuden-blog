@@ -29,7 +29,7 @@ $this->registerMetaTag([
         ['/blog/subscription']);
 ?>
 </div>
-<h4>Help us grow. Number of all subscriptions: <strong><?php echo (int)$subscriptionsNumber; ?></strong></h4>
+<h4>Number of all subscriptions: <strong><?php echo (int)$subscriptionsNumber; ?></strong></h4>
 
 <div class="game-forecast-view separator">
     <div id="prev-next-predictions">
