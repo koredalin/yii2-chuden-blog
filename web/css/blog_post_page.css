@@ -38,6 +38,10 @@
     top: -2px;
 }
 
+#guest_stars_vote_button>a {
+	color: white;
+}
+#guest_stars_vote_button,
 #logged_stars_vote_button,
 #cancel_logged_stars_vote_button {
 	margin: 21px auto 0 auto;

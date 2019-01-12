@@ -22,7 +22,7 @@ General features to fulfill:
 - `Blog Categories and Posts responsive user friendly indexes` - TODO
 - `Blog Post general view page` - Done
 - `Blog Comment Likes` - Done
-- `Blog Post ratings` - TODO
+- `Blog Post ratings` - Done
 	- `Schema.org ratings` - TODO
 - `Make Yii2 extension` - TODO
 - `Packagist registration` - TODO

@@ -90,7 +90,7 @@ $this->registerMetaTag([
     </span>
     <span id="vote_stars_rating_block" class="">
         <?php if (\Yii::$app->user->isGuest) { ?>
-        <?php echo Html::a('<span class="glyphicon glyphicon-check"></span>'.Yii::t('app', 'Vote for this post'), ['/user/login'], ['class' => 'btn btn-primary', 'title' => \Yii::t('app', 'Need log-in'), 'data-pjax' => '0']); ?>
+        <?php echo '<button id="guest_stars_vote_button" class="btn btn-primary">'.Html::a('<span class="glyphicon glyphicon-check"></span>'.Yii::t('app', 'Vote for this post'), ['/user/login'], ['title' => \Yii::t('app', 'Need log-in'), 'data-pjax' => '0']).'</button>'; ?>
         <?php } else { ?>
         <span id="vote_stars_rating" class="hidden">
             <?php echo HtmlStarsRating::starsRatingVote($model->id); ?>
@@ -110,14 +110,14 @@ if (in_array($ctrlAct, array('blog/comment-create', 'blog/comment-update'), true
     <div>Click the captcha image to change it.</div>
     <?php echo $form->field($commentModel, 'verifyCode')->widget(Captcha::className()); ?>
     <div class="form-group separator">
-        <?= Html::submitButton(Yii::t('app', 'Add Comment'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('<span class="glyphicon glyphicon-edit"></span>'.Yii::t('app', 'Add Comment'), ['class' => 'btn btn-success']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 <?php
 } else {
     $addCommentOptions = ['class' => 'btn btn-primary', 'data-pjax' => '0'];
     \Yii::$app->user->isGuest ? $addCommentOptions['title'] = \Yii::t('app', 'Need log-in') : false;
-    echo '<div class="separator">' . Html::a(Yii::t('app', 'Add a comment'), ['/blog/comment/create', 'blog_post_id' => (int)$model->id,], $addCommentOptions) . '</div>' . PHP_EOL;
+    echo '<div class="separator">' . Html::a('<span class="glyphicon glyphicon-edit"></span>'.Yii::t('app', 'Add a comment'), ['/blog/comment/create', 'blog_post_id' => (int)$model->id,], $addCommentOptions) . '</div>' . PHP_EOL;
 }
 ?>
 
