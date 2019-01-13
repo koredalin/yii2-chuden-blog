@@ -18,11 +18,13 @@ General features to fulfill:
 - `DB schema and migration` - Done
 - `Initial CRUD functionalities` - Done
 - `SEO Slug friendly URLs` - Done
-- `Blog Posts markup creation /Custom Create page/` - TODO
+- `Blog Posts markup creation /Custom Create page/` - Done
 - `Blog Categories and Posts responsive user friendly indexes` - TODO
 - `Blog Post general view page` - Done
 - `Blog Comment Likes` - Done
 - `Blog Post ratings` - Done
 	- `Schema.org ratings` - TODO
+- `Making language table, which will allow better language management` - TODO
 - `Make Yii2 extension` - TODO
 - `Packagist registration` - TODO
+- `Additional SEO features. Still not known` - TODO

@@ -44,8 +44,10 @@ class BlogPost extends \yii\db\ActiveRecord
     {
         return [
             [['published', 'blog_category_id'], 'integer'],
-            [['language', 'slug', 'title', 'meta_description', 'blog_category_id', 'content'], 'required'],
-            [['language', 'content'], 'string'],
+            [['language', 'slug', 'title', 'meta_description', 'blog_category_id', 'type'], 'required'],
+            ['podcast_url', 'required', 'when' => function ($this) { return in_array(trim($this->type), array('audio', 'video')); }, 'enableClientValidation' => false],
+            ['content', 'required', 'when' => function ($this) { return in_array(trim($this->type), array('', 'content')); }, 'enableClientValidation' => false],
+            [['language', 'type', 'podcast_url', 'content'], 'string'],
             [['rating'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['slug'], 'string', 'max' => 120],
@@ -73,6 +75,8 @@ class BlogPost extends \yii\db\ActiveRecord
             'meta_description' => Yii::t('app', 'Meta Description'),
             'blog_category_id' => Yii::t('app', 'Blog Category ID'),
             'tags' => Yii::t('app', 'Tags'),
+            'type' => Yii::t('app', 'Type'),
+            'podcast_url' => Yii::t('app', 'Podcast URL'),
             'content' => Yii::t('app', 'Content'),
             'rating' => Yii::t('app', 'Rating'),
             'created_at' => Yii::t('app', 'Created At'),

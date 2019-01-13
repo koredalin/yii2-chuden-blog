@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\markdown\MarkdownEditor;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\BlogPost */
@@ -26,13 +27,25 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'tags')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'type')->dropDownList([ 'content' => Yii::t('app', 'Content'), 'audio' => Yii::t('app', 'Audio'), 'video' => Yii::t('app', 'Video'), ], ['prompt' => '']) ?>
+    
+    <div id="podcast_url_block" class="<?php echo (!in_array($model->type, ['audio', 'video'])) ? 'hidden' : ''; ?>">
+        <?php
+        echo '<p><strong>'.Yii::t('app', 'Audio-video URL').'</strong></p>';
+        echo $form->field($model, 'podcast_url')->textarea(['rows' => 6]);
+        ?>
+    </div>
+    <div id="content_block" class="<?php echo (!in_array($model->type, ['', 'content'])) ? 'hidden' : ''; ?>">
+        <?php
+        echo '<p><strong>'.Yii::t('app', 'Content').'</strong></p>';
+        echo MarkdownEditor::widget([
+            'model' => $model, 
+            'attribute' => 'content',
+        ]);
+        ?>
+    </div>
 
     <?= $form->field($model, 'rating')->textInput(['maxlength' => true]) ?>
-
-    <?php // $form->field($model, 'created_at')->textInput() ?>
-
-    <?php // $form->field($model, 'updated_at')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
@@ -40,4 +53,5 @@ use yii\widgets\ActiveForm;
 
     <?php ActiveForm::end(); ?>
 
+    <?php $this->registerJsFile('@web/js/blog_post_form.js', ['depends' => [\yii\web\JqueryAsset::className()]]); ?>
 </div>

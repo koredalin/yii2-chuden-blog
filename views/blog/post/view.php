@@ -37,6 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'meta_description',
             'blog_category_id',
             'tags',
+            'type',
+            'podcast_url',
             'content:ntext',
             'rating',
             'created_at',
