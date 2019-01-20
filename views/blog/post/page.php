@@ -82,7 +82,7 @@ $this->registerMetaTag([
         <li><?php echo Yii::t('app', 'Post created at'); ?>: <strong><?php echo $model->created_at; ?></strong></li>
         <li><?php echo Yii::t('app', 'Post last update'); ?>: <strong><?php echo Yii::t('app', $model->updated_at); ?></strong></li>
     </ul>
-    <div><?php echo Markdown::convert($model->content) . PHP_EOL; ?></div>
+    <div id="content_container"><?php echo Markdown::convert($model->content) . PHP_EOL; ?></div>
 </div>
 <div id="stars-rating" class="separator">
     <span id="current_stars_rating" class="">

@@ -3,16 +3,18 @@
 namespace app\models;
 
 use Yii;
+use app\models\Language;
 
 /**
  * This is the model class for table "blog_subscription".
  *
  * @property string $id
  * @property int $user_id
- * @property string $language
+ * @property string $language_id
  * @property string $created_at
  * @property string $updated_at
  *
+ * @property Language $language
  * @property User $user
  */
 class BlogSubscription extends \yii\db\ActiveRecord
@@ -31,9 +33,8 @@ class BlogSubscription extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'language'], 'required'],
-            [['user_id'], 'integer'],
-            [['language'], 'string'],
+            [['user_id', 'language_id'], 'required'],
+            [['user_id', 'language_id'], 'integer'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -47,10 +48,18 @@ class BlogSubscription extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'user_id' => Yii::t('app', 'User ID'),
-            'language' => Yii::t('app', 'Language'),
+            'language_id' => Yii::t('app', 'Language ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLanguage()
+    {
+        return $this->hasOne(Language::className(), ['id' => 'language_id']);
     }
 
     /**

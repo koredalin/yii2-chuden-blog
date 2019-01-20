@@ -3,6 +3,7 @@
 namespace app\models\query;
 
 use app\models\BlogPost;
+use app\models\Language;
 
 /**
  * This is the ActiveQuery class for [[\app\models\BlogPost]].
@@ -36,8 +37,9 @@ class BlogPostQuery extends \yii\db\ActiveQuery
     
     public function getAlternativeLanguages($slug, $language)
     {
-        return $this->where(['slug' => (int)$slug])
-                ->andWhere(['!=', 'language', $language])
+        $languageObj = Language::find()->select('id')->where(['code' => $language]);
+        return $this->where(['slug' => $slug])
+                ->andWhere(['!=', 'language_id', $languageObj])
                 ->andWhere(['published' => BlogPost::PUBLISHED])->all();
     }
     

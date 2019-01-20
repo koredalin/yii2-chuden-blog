@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
+use app\controllers\blog\PostController;
 use app\models\BlogComment;
 use app\models\search\BlogCommentSearch;
 use app\models\BlogCommentLike;
@@ -117,10 +118,10 @@ class CommentController extends Controller
             }
         }
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+            return $this->redirect([PostController::getAssembledPostPageUrl($postModel)]);
         }
-        Yii::$app->language = trim($postModel->language);
-        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
+        Yii::$app->language = trim($postModel->language->code);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language->code);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
         $userCommentLikeIdsPerPost = array_column(BlogCommentLike::find()->getUserCommentLikeIdsPerPost(Yii::$app->user->identity->id, $postModel->id), 'blog_comment_id');
         !is_array($userCommentLikeIdsPerPost) ? $userCommentLikeIdsPerPost = array() : false;
@@ -151,10 +152,10 @@ class CommentController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
-            return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+            return $this->redirect([PostController::getAssembledPostPageUrl($postModel)]);
         }
-        Yii::$app->language = trim($postModel->language);
-        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
+        Yii::$app->language = trim($postModel->language->code);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language->code);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
         $userCommentLikeIdsPerPost = array_column(BlogCommentLike::find()->getUserCommentLikeIdsPerPost(Yii::$app->user->identity->id, $postModel->id), 'blog_comment_id');
         !is_array($userCommentLikeIdsPerPost) ? $userCommentLikeIdsPerPost = array() : false;
@@ -184,7 +185,7 @@ class CommentController extends Controller
         }
         $model->delete();
 
-        return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+        return $this->redirect([PostController::getAssembledPostPageUrl($postModel)]);
     }
     
     public function actionLike($id, $like = 0)
@@ -197,10 +198,10 @@ class CommentController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $model->updated_at = date('Y-m-d H:i:s');
             $model->save(false);
-            return $this->redirect([$this->getAssembledPostPageUrl($postModel)]);
+            return $this->redirect([PostController::getAssembledPostPageUrl($postModel)]);
         }
-        Yii::$app->language = trim($postModel->language);
-        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language);
+        Yii::$app->language = trim($postModel->language->code);
+        $alterLangsModels = BlogPost::find()->getAlternativeLanguages($postModel->slug, $postModel->language->code);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
 
         return $this->render('/blog/post/page', [
@@ -209,11 +210,6 @@ class CommentController extends Controller
             'alterLangsModels' => $alterLangsModels,
             'subscriptionsNumber' => $subscriptionsNumber,
         ]);
-    }
-    
-    public function actionDislike($id)
-    {
-        
     }
 
     /**
@@ -266,11 +262,6 @@ class CommentController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    protected function getAssembledPostPageUrl(BlogPost $postModel)
-    {
-        return '/blog/post/'.$postModel->id.'/'.strtolower($postModel->language).'/'.$postModel->slug;
     }
 
     /**

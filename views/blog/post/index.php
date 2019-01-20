@@ -31,7 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'published',
-            'language',
+//            'language',
+            [// Language
+                'label' => 'Language',
+                'attribute' => 'languageCode',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return $data->language->code.' - '.$data->language->name;
+                },
+            ],
 //            'slug',
             [// Slug. Link to Post Page.
                 'label' => 'Slug',
@@ -42,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $result = Html::a($data->slug, [$postUrl], ['data-pjax' => '0',]);
                     return $result;
                 },
-                ],
+            ],
             'title',
             //'meta_description',
             //'blog_category_id',

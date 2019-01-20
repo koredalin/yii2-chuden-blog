@@ -47,3 +47,10 @@
 	margin: 21px auto 0 auto;
 	display: block;
 }
+
+#content_container img,
+#content_container img.full_screen {
+	width: 90%;
+	display: block;
+	margin: 0 auto;
+}

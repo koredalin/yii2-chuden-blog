@@ -11,14 +11,16 @@ use app\models\BlogPost;
  */
 class BlogPostSearch extends BlogPost
 {
+    public $languageCode = '';
+    
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'published', 'blog_category_id'], 'integer'],
-            [['language', 'slug', 'title', 'meta_description', 'tags', 'content', 'created_at', 'updated_at'], 'safe'],
+            [['id', 'published', 'language_id', 'blog_category_id'], 'integer'],
+            [['slug', 'title', 'meta_description', 'tags', 'content', 'created_at', 'updated_at', 'languageCode'], 'safe'],
             [['rating'], 'number'],
         ];
     }
@@ -66,8 +68,11 @@ class BlogPostSearch extends BlogPost
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
-
-        $query->andFilterWhere(['like', 'language', $this->language])
+        
+        $lang = strlen(trim($this->languageCode)) > 0
+                ? \app\models\Language::find()->select('id')->where(['like', 'code', $this->languageCode])->orWhere(['like', 'name', $this->languageCode])
+                : $this->language_id;
+        $query->andFilterWhere(['IN', 'language_id', $lang])
             ->andFilterWhere(['like', 'slug', $this->slug])
             ->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'meta_description', $this->meta_description])

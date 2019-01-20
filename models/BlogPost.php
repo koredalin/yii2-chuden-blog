@@ -3,13 +3,14 @@
 namespace app\models;
 
 use Yii;
+use app\models\Language;
 
 /**
  * This is the model class for table "blog_post".
  *
  * @property string $id
  * @property int $published
- * @property string $language
+ * @property string $language_id
  * @property string $slug
  * @property string $title
  * @property string $meta_description
@@ -22,6 +23,7 @@ use Yii;
  *
  * @property BlogComment[] $blogComments
  * @property BlogCategory $blogCategory
+ * @property Language $language
  * @property BlogPostRating[] $blogPostRatings
  */
 class BlogPost extends \yii\db\ActiveRecord
@@ -43,11 +45,11 @@ class BlogPost extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['published', 'blog_category_id'], 'integer'],
-            [['language', 'slug', 'title', 'meta_description', 'blog_category_id', 'type'], 'required'],
+            [['published', 'blog_category_id', 'language_id'], 'integer'],
+            [['language_id', 'slug', 'title', 'meta_description', 'blog_category_id', 'type'], 'required'],
             ['podcast_url', 'required', 'when' => function ($this) { return in_array(trim($this->type), array('audio', 'video')); }, 'enableClientValidation' => false],
             ['content', 'required', 'when' => function ($this) { return in_array(trim($this->type), array('', 'content')); }, 'enableClientValidation' => false],
-            [['language', 'type', 'podcast_url', 'content'], 'string'],
+            [['type', 'podcast_url', 'content', 'languageCode'], 'string'],
             [['rating'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['slug'], 'string', 'max' => 120],
@@ -69,7 +71,7 @@ class BlogPost extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'published' => Yii::t('app', 'Published'),
-            'language' => Yii::t('app', 'Language'),
+            'language_id' => Yii::t('app', 'Language ID'),
             'slug' => Yii::t('app', 'Slug'),
             'title' => Yii::t('app', 'Title'),
             'meta_description' => Yii::t('app', 'Meta Description'),
@@ -98,6 +100,14 @@ class BlogPost extends \yii\db\ActiveRecord
     public function getBlogCategory()
     {
         return $this->hasOne(BlogCategory::className(), ['id' => 'blog_category_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLanguage()
+    {
+        return $this->hasOne(Language::className(), ['id' => 'language_id']);
     }
 
     /**

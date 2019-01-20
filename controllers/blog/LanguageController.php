@@ -7,17 +7,14 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
-use app\controllers\blog\PostController;
-use app\models\BlogPost;
-use app\models\BlogComment;
-use app\models\BlogCommentLike;
-use app\models\search\BlogCommentLikeSearch;
+use app\models\Language;
+use app\models\search\LanguageSearch;
 use yii\web\NotFoundHttpException;
 
 /**
- * CommentlikeController implements the CRUD actions for BlogCommentLike model.
+ * LanguageController implements the CRUD actions for Language model.
  */
-class CommentlikeController extends Controller
+class LanguageController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -30,15 +27,10 @@ class CommentlikeController extends Controller
 			    'ruleConfig' => [
 			        'class' => AccessRule::className(),
 			    ],
-				'only' => ['like', 'create', 'update', 'delete', 'view', 'index'],
+				'only' => ['create', 'update', 'delete', 'view', 'index'],
 				'rules' => [
 					[
-						'actions' => ['like', 'delete'],
-						'allow' => true,
-						'roles' => ['@', 'admin'],
-					],
-					[
-						'actions' => ['create', 'update', 'view', 'index'],
+						'actions' => ['create', 'update', 'delete', 'view', 'index'],
 						'allow' => true,
 						'roles' => ['admin'],
 					],
@@ -54,12 +46,12 @@ class CommentlikeController extends Controller
     }
 
     /**
-     * Lists all BlogCommentLike models.
+     * Lists all Language models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new BlogCommentLikeSearch();
+        $searchModel = new LanguageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -69,8 +61,8 @@ class CommentlikeController extends Controller
     }
 
     /**
-     * Displays a single BlogCommentLike model.
-     * @param string $id
+     * Displays a single Language model.
+     * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -82,13 +74,13 @@ class CommentlikeController extends Controller
     }
 
     /**
-     * Creates a new BlogCommentLike model.
+     * Creates a new Language model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new BlogCommentLike();
+        $model = new Language();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,54 +91,10 @@ class CommentlikeController extends Controller
         ]);
     }
 
-    private function getAssembledPostPageUrl(BlogPost $postModel)
-    {
-        return '/blog/post/'.$postModel->id.'/'.strtolower($postModel->language).'/'.$postModel->slug;
-    }
-    
-    private function updateCommentLikes($blog_comment_id)
-    {
-        $commentLikes = BlogCommentLike::find()->countCommentLikes($blog_comment_id);
-        $commentModel = BlogComment::findOne($blog_comment_id);
-        $commentModel->likes = $commentLikes;
-        $commentModel->updated_at = date('Y-m-d H:i:s');
-        $commentModel->save(false);
-    }
-
-
-    public function actionLike($blog_comment_id)
-    {
-        $model = new BlogCommentLike();
-        $model->user_id = (int)Yii::$app->user->identity->id;
-        $model->blog_comment_id = (int)$blog_comment_id;
-        if ($model->save()) {
-            $this->updateCommentLikes($blog_comment_id);
-            $postModel = $model->blogComment->blogPost;
-            if (isset($postModel)) {
-                return $this->redirect([PostController::getAssembledPostPageUrl($postModel)]);
-            }
-        }
-        
-        return $this->redirect(['/blog/post']);
-    }
-    
-    public function actionDislike($blog_comment_id)
-    {
-        $model = BlogCommentLike::findOne(['user_id' => (int)Yii::$app->user->identity->id, 'blog_comment_id' => (int)$blog_comment_id]);
-        $postModel = $model->blogComment->blogPost;
-        $model->delete();
-        if (isset($postModel)) {
-            $this->updateCommentLikes($blog_comment_id);
-            return $this->redirect([PostController::getAssembledPostPageUrl($postModel)]);
-        }
-        
-        return $this->redirect(['/blog/post']);
-    }
-
     /**
-     * Updates an existing BlogCommentLike model.
+     * Updates an existing Language model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -164,9 +112,9 @@ class CommentlikeController extends Controller
     }
 
     /**
-     * Deletes an existing BlogCommentLike model.
+     * Deletes an existing Language model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -178,15 +126,15 @@ class CommentlikeController extends Controller
     }
 
     /**
-     * Finds the BlogCommentLike model based on its primary key value.
+     * Finds the Language model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $id
-     * @return BlogCommentLike the loaded model
+     * @param integer $id
+     * @return Language the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = BlogCommentLike::findOne($id)) !== null) {
+        if (($model = Language::findOne($id)) !== null) {
             return $model;
         }
 

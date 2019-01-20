@@ -12,6 +12,7 @@ use app\models\BlogPost;
 use app\models\search\BlogPostSearch;
 use app\models\BlogComment;
 use app\models\BlogCommentLike;
+use app\models\Language;
 use app\models\BlogSubscription;
 use yii\web\NotFoundHttpException;
 
@@ -25,7 +26,7 @@ class PostController extends Controller
      */
     public function behaviors()
     {
-        // TODO - https://code.tutsplus.com/tutorials/how-to-program-with-yii2-sluggable-behavior--cms-23222
+        // https://code.tutsplus.com/tutorials/how-to-program-with-yii2-sluggable-behavior--cms-23222
         return [
 			'access' => [
 				'class' => AccessControl::className(),
@@ -75,7 +76,7 @@ class PostController extends Controller
 
     public static function getAssembledPostPageUrl(BlogPost $postModel)
     {
-        return '/blog/post/'.$postModel->id.'/'.strtolower($postModel->language).'/'.$postModel->slug;
+        return '/blog/post/'.$postModel->id.'/'.strtolower($postModel->language->code).'/'.$postModel->slug;
     }
 
     /**
@@ -119,8 +120,8 @@ class PostController extends Controller
         if ((int) $model->published != 1 && !$isAdmin) {
             return $this->redirect(['/blog/post']);
         }
-        Yii::$app->language = trim($model->language);
-        $alterLangsModels = $model::find()->getAlternativeLanguages($model->slug, $model->language);
+        Yii::$app->language = trim($model->language->code);
+        $alterLangsModels = $model::find()->getAlternativeLanguages($model->slug, $model->language->code);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
         $commentModel = new BlogComment();
         $user_id = Yii::$app->user->isGuest ? 0 : Yii::$app->user->isGuest;
@@ -220,7 +221,8 @@ class PostController extends Controller
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
         $language = strtolower(substr($language, 0, 2)) . '-' . strtoupper(substr($language, -2));
-        if (($model = BlogPost::find()->where(['id' => (int)$id, 'language' => $language, 'slug' => strtolower(trim($slug))])->one()) !== null) {
+        $languageObj = Language::find()->select('id')->where(['code' => $language]);
+        if (($model = BlogPost::find()->where(['id' => (int)$id, 'language_id' => $languageObj, 'slug' => strtolower(trim($slug))])->one()) !== null) {
             return $model;
         }
 
