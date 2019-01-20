@@ -15,7 +15,7 @@ PROJECT PLAN
 
 General features to fulfill:
 
-- `DB schema and migration` - Done
+- `DB schema and migration` - Not updated yet. Older version.
 - `Initial CRUD functionalities` - Done
 - `SEO Slug friendly URLs` - Done
 - `Blog Posts markup creation /Custom Create page/` - Done
@@ -24,7 +24,7 @@ General features to fulfill:
 - `Blog Comment Likes` - Done
 - `Blog Post ratings` - Done
 	- `Schema.org ratings` - TODO
-- `Making language table, which will allow better language management` - TODO
+- `Making language table, which will allow better language management` - Done
 - `Make Yii2 extension` - TODO
 - `Packagist registration` - TODO
 - `Additional SEO features. Still not known` - TODO
