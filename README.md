@@ -15,7 +15,7 @@ PROJECT PLAN
 
 General features to fulfill:
 
-- `DB schema and migration` - Not updated yet. Older version.
+- `DB schema and migration` - Done
 - `Initial CRUD functionalities` - Done
 - `SEO Slug friendly URLs` - Done
 - `Blog Posts markup creation /Custom Create page/` - Done
