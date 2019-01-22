@@ -14,7 +14,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'user_id')->textInput() ?>
 
-    <?= $form->field($model, 'language')->dropDownList([ 'en-GB' => 'En-GB', 'bg-BG' => 'Bg-BG', 'ru-RU' => 'Ru-RU', ], ['prompt' => '']) ?>
+    <div><strong>Language</strong></div>
+    <?= Html::activeDropDownList($model, 'language_id', $languageItems, ['prompt' => '', 'class' => 'form-control']) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

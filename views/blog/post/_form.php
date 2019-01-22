@@ -15,7 +15,8 @@ use kartik\markdown\MarkdownEditor;
 
     <?= $form->field($model, 'published')->textInput() ?>
 
-    <?= $form->field($model, 'language')->dropDownList([ 'en-GB' => 'En-GB', 'bg-BG' => 'Bg-BG', ], ['prompt' => '']) ?>
+    <div><strong>Language</strong></div>
+    <?= Html::activeDropDownList($model, 'language_id', $languageItems, ['prompt' => '', 'class' => 'form-control']) ?>
 
     <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 

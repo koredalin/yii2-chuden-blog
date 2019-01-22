@@ -6,8 +6,10 @@ use Yii;
 use app\models\BlogSubscription;
 use app\models\search\BlogSubscriptionSearch;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
+use app\models\Language;
+use yii\web\NotFoundHttpException;
 
 /**
  * SubscriptionController implements the CRUD actions for BlogSubscription model.
@@ -69,9 +71,10 @@ class SubscriptionController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
+        $languageItems = ArrayHelper::map(Language::find()->all(), 'id', 'name');
         return $this->render('create', [
             'model' => $model,
+            'languageItems' => $languageItems,
         ]);
     }
 
@@ -91,9 +94,10 @@ class SubscriptionController extends Controller
             $model->save(false);
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
+        $languageItems = ArrayHelper::map(Language::find()->all(), 'id', 'name');
         return $this->render('update', [
             'model' => $model,
+            'languageItems' => $languageItems,
         ]);
     }
 

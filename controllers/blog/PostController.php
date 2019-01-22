@@ -8,6 +8,7 @@ use yii\filters\AccessControl;
 use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
 use yii\behaviors\SluggableBehavior;
+use yii\helpers\ArrayHelper;
 use app\models\BlogPost;
 use app\models\search\BlogPostSearch;
 use app\models\BlogComment;
@@ -149,9 +150,10 @@ class PostController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
+        $languageItems = ArrayHelper::map(Language::find()->all(), 'id', 'name');
         return $this->render('create', [
             'model' => $model,
+            'languageItems' => $languageItems,
         ]);
     }
 
@@ -171,9 +173,10 @@ class PostController extends Controller
             $model->save(false);
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
+        $languageItems = ArrayHelper::map(Language::find()->all(), 'id', 'name');
         return $this->render('update', [
             'model' => $model,
+            'languageItems' => $languageItems,
         ]);
     }
 

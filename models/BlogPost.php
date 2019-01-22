@@ -49,7 +49,7 @@ class BlogPost extends \yii\db\ActiveRecord
             [['language_id', 'slug', 'title', 'meta_description', 'blog_category_id', 'type'], 'required'],
             ['podcast_url', 'required', 'when' => function ($this) { return in_array(trim($this->type), array('audio', 'video')); }, 'enableClientValidation' => false],
             ['content', 'required', 'when' => function ($this) { return in_array(trim($this->type), array('', 'content')); }, 'enableClientValidation' => false],
-            [['type', 'podcast_url', 'content', 'languageCode'], 'string'],
+            [['type', 'podcast_url', 'content',], 'string'],
             [['rating'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['slug'], 'string', 'max' => 120],

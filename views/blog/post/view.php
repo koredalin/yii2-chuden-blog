@@ -31,7 +31,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'published',
-            'language',
+            [
+                'attribute' => 'language',
+                'label' => 'Language',
+                'format' => 'raw',
+                'value' => $model->language->name,
+            ],
             'slug',
             'title',
             'meta_description',
