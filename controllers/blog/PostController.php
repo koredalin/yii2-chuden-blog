@@ -125,7 +125,7 @@ class PostController extends Controller
         $alterLangsModels = $model::find()->getAlternativeLanguages($model->slug, $model->language->code);
         $subscriptionsNumber = (int)BlogSubscription::find()->countAllSubscriptions();
         $commentModel = new BlogComment();
-        $user_id = Yii::$app->user->isGuest ? 0 : Yii::$app->user->isGuest;
+        $user_id = Yii::$app->user->isGuest ? 0 : Yii::$app->user->identity->id;
         $userCommentLikeIdsPerPost = array_column(BlogCommentLike::find()->getUserCommentLikeIdsPerPost($user_id, $id), 'blog_comment_id');
         !is_array($userCommentLikeIdsPerPost) ? $userCommentLikeIdsPerPost = array() : false;
         

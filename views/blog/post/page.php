@@ -12,7 +12,6 @@ use app\views\helpers\HtmlStarsRating;
 /* @var $form yii\widgets\ActiveForm */
 
 $this->title = Yii::t('app', $model->title);
-//var_dump($this->title); exit;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Blog Posts'), 'url' => ['/blog/post']];
 $this->params['breadcrumbs'][] = $this->title;
 $brand = \Yii::$app->params['brand'];
@@ -124,16 +123,11 @@ if (in_array($ctrlAct, array('blog/comment-create', 'blog/comment-update'), true
 <?php
 $parentComments = BlogComment::find()->getParentPostComments($model->id);
 $heirComments = BlogComment::find()->getHeirPostComments($model->id);
-//echo '$parentComments: ';
-//print_r($parentComments);
-//echo '$heirComments: ';
-//print_r($heirComments);
 $rearrangedHeirComments = array();
 foreach ($heirComments as $heirCommentModel) {
     $rearrangedHeirComments[(int)$heirCommentModel->parent_id][] = $heirCommentModel;
 }
-//echo '$rearrangedHeirComments: ';
-//print_r($rearrangedHeirComments); exit;
+
 $adminUsernames = \Yii::$app->getModule('user')->admins;
 foreach ($parentComments as $key => $commentModel) {
     $currUsername = $commentModel->user->username;
