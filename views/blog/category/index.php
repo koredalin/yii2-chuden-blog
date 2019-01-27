@@ -11,7 +11,13 @@ $this->title = Yii::t('app', 'Blog Categories');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="blog-category-index">
-
+    
+    <?php if(Yii::$app->session->hasFlash('no_category')):?>
+        <div class="alert alert-info" role="alert">
+            <strong><?php echo Yii::$app->session->getFlash('no_category'); ?></strong>
+        </div>
+    <?php endif; ?>
+    
     <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

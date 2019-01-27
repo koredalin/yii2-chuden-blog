@@ -9,6 +9,7 @@ use dektrium\user\filters\AccessRule;
 use yii\filters\VerbFilter;
 use yii\behaviors\SluggableBehavior;
 use yii\helpers\ArrayHelper;
+use app\models\BlogCategory;
 use app\models\BlogPost;
 use app\models\search\BlogPostSearch;
 use app\models\BlogComment;
@@ -150,9 +151,15 @@ class PostController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
+        $categoryItems = ArrayHelper::map(BlogCategory::find()->all(), 'id', 'name');
+        if (!is_array($categoryItems || empty($categoryItems))) {
+            Yii::$app->session->setFlash('no_category', 'Make a category first.');
+            return $this->redirect(['/blog/category']);
+        }
         $languageItems = ArrayHelper::map(Language::find()->all(), 'id', 'name');
         return $this->render('create', [
             'model' => $model,
+            'categoryItems' => $categoryItems,
             'languageItems' => $languageItems,
         ]);
     }
@@ -173,9 +180,11 @@ class PostController extends Controller
             $model->save(false);
             return $this->redirect(['view', 'id' => $model->id]);
         }
+        $categoryItems = ArrayHelper::map(BlogCategory::find()->all(), 'id', 'name');
         $languageItems = ArrayHelper::map(Language::find()->all(), 'id', 'name');
         return $this->render('update', [
             'model' => $model,
+            'categoryItems' => $categoryItems,
             'languageItems' => $languageItems,
         ]);
     }

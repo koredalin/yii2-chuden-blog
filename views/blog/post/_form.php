@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\markdown\MarkdownEditor;
+use app\models\BlogPost;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\BlogPost */
@@ -12,11 +13,14 @@ use kartik\markdown\MarkdownEditor;
 <div class="blog-post-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'published')->textInput() ?>
+    
+    <?= $form->field($model, 'published')->dropDownList([ BlogPost::NOT_PUBLISHED => Yii::t('app', 'Not Published'), BlogPost::PUBLISHED => Yii::t('app', 'Published'), ], ['prompt' => '', 'options'=>[BlogPost::NOT_PUBLISHED => ['Selected' => true]]]) ?>
 
     <div><strong>Language</strong></div>
-    <?= Html::activeDropDownList($model, 'language_id', $languageItems, ['prompt' => '', 'class' => 'form-control']) ?>
+    <?php
+    $enGb = 61;
+    echo Html::activeDropDownList($model, 'language_id', $languageItems, ['prompt' => '', 'options'=>[$enGb => ['Selected' => true]], 'class' => 'form-control']);
+    ?>
 
     <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 
@@ -24,11 +28,12 @@ use kartik\markdown\MarkdownEditor;
 
     <?= $form->field($model, 'meta_description')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'blog_category_id')->textInput(['maxlength' => true]) ?>
+    <div><strong>Category</strong></div>
+    <?= Html::activeDropDownList($model, 'blog_category_id', $categoryItems, ['prompt' => '', 'class' => 'form-control']) ?>
 
     <?= $form->field($model, 'tags')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'type')->dropDownList([ 'content' => Yii::t('app', 'Content'), 'audio' => Yii::t('app', 'Audio'), 'video' => Yii::t('app', 'Video'), ], ['prompt' => '']) ?>
+    <?= $form->field($model, 'type')->dropDownList([ 'content' => Yii::t('app', 'Content'), 'audio' => Yii::t('app', 'Audio'), 'video' => Yii::t('app', 'Video'), ], ['prompt' => '', 'options'=>['content' => ['Selected' => true]]]) ?>
     
     <div id="podcast_url_block" class="<?php echo (!in_array($model->type, ['audio', 'video'])) ? 'hidden' : ''; ?>">
         <?php
