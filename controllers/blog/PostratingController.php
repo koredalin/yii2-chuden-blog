@@ -120,8 +120,10 @@ class PostratingController extends Controller
     private function updatePostRating($blog_post_id)
     {
         $postRating = BlogPostRating::find()->getPostRating($blog_post_id);
+        $postVoteCount = BlogPostRating::find()->getPostVoteCount($blog_post_id);
         $postModel = BlogPost::findOne($blog_post_id);
         $postModel->rating = $postRating;
+        $postModel->vote_count = $postVoteCount;
         $postModel->updated_at = date('Y-m-d H:i:s');
         $postModel->save(false);
     }

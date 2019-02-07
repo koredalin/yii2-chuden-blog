@@ -67,6 +67,7 @@ class m190121_165914_chuden_blog extends Migration
             'podcast_url'=> $this->string(300)->null()->defaultValue(null),
             'content'=> $this->text()->null()->defaultValue(null),
             'rating'=> $this->decimal(3, 2)->null()->defaultValue(null),
+            'vote_count'=> $this->integer(10)->null()->defaultValue(null),
             'created_at'=> $this->datetime()->notNull()->defaultExpression("CURRENT_TIMESTAMP"),
             'updated_at'=> $this->datetime()->notNull()->defaultExpression("CURRENT_TIMESTAMP"),
         ], $tableOptions);

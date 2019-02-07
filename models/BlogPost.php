@@ -18,6 +18,7 @@ use app\models\Language;
  * @property string $tags
  * @property string $content
  * @property string $rating
+ * @property string $vote_count
  * @property string $created_at
  * @property string $updated_at
  *
@@ -46,7 +47,7 @@ class BlogPost extends \yii\db\ActiveRecord
     {
         $model = $this;
         return [
-            [['published', 'blog_category_id', 'language_id'], 'integer'],
+            [['published', 'blog_category_id', 'language_id', 'vote_count'], 'integer'],
             [['language_id', 'slug', 'title', 'meta_description', 'blog_category_id', 'type'], 'required'],
             ['podcast_url', 'required', 'when' => function ($model) { return in_array(trim($model->type), array('audio', 'video')); }, 'enableClientValidation' => false],
             ['content', 'required', 'when' => function ($model) { return in_array(trim($model->type), array('', 'content')); }, 'enableClientValidation' => false],
@@ -82,6 +83,7 @@ class BlogPost extends \yii\db\ActiveRecord
             'podcast_url' => Yii::t('app', 'Podcast URL'),
             'content' => Yii::t('app', 'Content'),
             'rating' => Yii::t('app', 'Rating'),
+            'vote_count' => Yii::t('app', 'vote_count'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];

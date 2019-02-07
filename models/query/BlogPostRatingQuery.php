@@ -36,4 +36,9 @@ class BlogPostRatingQuery extends \yii\db\ActiveQuery
     {
         return round($this->where(['blog_post_id' => (int)$blog_post_id])->average('rating'), 2);
     }
+    
+    public function getPostVoteCount($blog_post_id)
+    {
+        return (int)$this->where(['blog_post_id' => (int)$blog_post_id])->count();
+    }
 }
