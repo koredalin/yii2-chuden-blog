@@ -43,23 +43,19 @@ class BlogPostQuery extends \yii\db\ActiveQuery
                 ->andWhere(['published' => BlogPost::PUBLISHED])->all();
     }
     
-    public function getPreviousPost($currentPostId)
+    public function getPreviousPostId($currentPostId)
     {
-        $query = $this->where(['<', 'id', (int)$currentPostId])
+        $prevPostId = (int)$this->select('id')->where(['<', 'id', (int)$currentPostId])
                 ->andWhere(['>', 'id', 0])->max('id');
-        if (isset($query)) {
-            return $query->one();
-        }
-        return null;
+        
+        return $prevPostId;
     }
     
-    public function getNextPost($currentPostId)
+    public function getNextPostId($currentPostId)
     {
-        $query = $this->where(['>', 'id', (int)$currentPostId])
+        $nextPostId = (int)$this->select('id')->where(['>', 'id', (int)$currentPostId])
                 ->andWhere(['>', 'id', 0])->min('id');
-        if (isset($query)) {
-            return $query->one();
-        }
-        return null;
+        
+        return $nextPostId;
     }
 }

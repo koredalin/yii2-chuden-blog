@@ -147,12 +147,12 @@ class PostController extends Controller
     public function actionCreate()
     {
         $model = new BlogPost();
-
+        $model->author_id = Yii::$app->user->identity->id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
         $categoryItems = ArrayHelper::map(BlogCategory::find()->all(), 'id', 'name');
-        if (!is_array($categoryItems || empty($categoryItems))) {
+        if (!is_array($categoryItems) || empty($categoryItems)) {
             Yii::$app->session->setFlash('no_category', 'Make a category first.');
             return $this->redirect(['/blog/category']);
         }

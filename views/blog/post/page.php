@@ -5,6 +5,7 @@ use kartik\markdown\Markdown;
 use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 use app\models\BlogComment;
+use app\models\BlogPost;
 use app\views\helpers\HtmlStarsRating;
 
 /* @var $this yii\web\View */
@@ -34,10 +35,12 @@ $this->registerMetaTag([
     <div id="prev-next-predictions">
         <span class="prev-prediction inline-block">
         <?php
-        $prevPost = app\models\BlogPost::find()->getPreviousPost($model->id);
-        $nextPost = app\models\BlogPost::find()->getNextPost($model->id);
+        $prevPostId = BlogPost::find()->getPreviousPostId($model->id);
+        $prevPost = BlogPost::findOne($prevPostId);
+        $nextPostId = BlogPost::find()->getNextPostId($model->id);
+        $nextPost = BlogPost::findOne($nextPostId);
         if (isset($prevPost)) {
-            echo Html::a(Yii::t('app', 'Previous post'), array('/blog/post/'.$prevPost->id.'/'.strtolower($prevPost->language).'/'.$prevPost->slug)).PHP_EOL;
+            echo Html::a(Yii::t('app', 'Previous post'), array('/blog/post/'.$prevPost->id.'/'.strtolower($prevPost->language->code).'/'.$prevPost->slug)).PHP_EOL;
         } else {
             echo Yii::t('app', 'Previous post').PHP_EOL;
         }
@@ -46,8 +49,8 @@ $this->registerMetaTag([
         <span> | </span>
         <span class="next-prediction inline-block">
         <?php
-        if ($nextPost > 0) {
-            echo Html::a(Yii::t('app', 'Next post'), array('/blog/post/'.$nextPost->id.'/'.strtolower($nextPost->language).'/'.$nextPost->slug)).PHP_EOL;
+        if ($nextPostId > 0) {
+            echo Html::a(Yii::t('app', 'Next post'), array('/blog/post/'.$nextPost->id.'/'.strtolower($nextPost->language->code).'/'.$nextPost->slug)).PHP_EOL;
         } else {
             echo Yii::t('app', 'Next post').PHP_EOL;
         }

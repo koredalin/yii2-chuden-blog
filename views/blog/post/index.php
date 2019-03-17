@@ -30,7 +30,16 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'published',
+//            'published',
+            [// Published
+                'label' => 'Published',
+                'attribute' => 'published',
+                'format' => 'raw',
+                'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin ? true : false,
+                'value' => function ($data) {
+                    return $data->published == 1 ? '<span class="green">PUBLISHED</span>' : 'NOT PUBLISHED';
+                },
+            ],
 //            'language',
             [// Language
                 'label' => 'Language',
@@ -52,6 +61,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             'title',
+            [// Slug. Link to Post Page.
+                'label' => 'Author',
+                'attribute' => 'author',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    $result = $data->author->username;
+                    return $result;
+                },
+            ],
             //'meta_description',
             //'blog_category_id',
             //'tags',

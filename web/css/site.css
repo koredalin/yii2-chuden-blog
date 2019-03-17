@@ -138,3 +138,6 @@ div.parent_comment, div.heir_comment {
 .hidden {
 	display: none;
 }
+.green {
+	color: green;
+}

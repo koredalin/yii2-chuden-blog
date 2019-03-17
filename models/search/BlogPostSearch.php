@@ -2,6 +2,7 @@
 
 namespace app\models\search;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\BlogPost;
@@ -59,10 +60,11 @@ class BlogPostSearch extends BlogPost
             return $dataProvider;
         }
 
+        $publishedFilter = (!Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin) ? $this->published : 1;
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'published' => $this->published,
+            'published' => $publishedFilter,
             'blog_category_id' => $this->blog_category_id,
             'rating' => $this->rating,
             'created_at' => $this->created_at,
