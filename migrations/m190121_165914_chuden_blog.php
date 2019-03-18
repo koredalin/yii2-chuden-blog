@@ -65,6 +65,7 @@ class m190121_165914_chuden_blog extends Migration
             'tags'=> $this->string(255)->null()->defaultValue(null),
             'type'=> "enum('content', 'audio', 'video') NOT NULL DEFAULT 'content'",
             'podcast_url'=> $this->string(300)->null()->defaultValue(null),
+            'author_id'=> $this->integer(11)->notNull(),
             'content'=> $this->text()->null()->defaultValue(null),
             'rating'=> $this->decimal(3, 2)->null()->defaultValue(null),
             'vote_count'=> $this->integer(10)->null()->defaultValue(null),
@@ -78,6 +79,7 @@ class m190121_165914_chuden_blog extends Migration
         $this->createIndex('slug','{{%blog_post}}',['slug'],false);
         $this->createIndex('blog_category_id','{{%blog_post}}',['blog_category_id'],false);
         $this->createIndex('language_id','{{%blog_post}}',['language_id'],false);
+        $this->createIndex('author_id','{{%blog_post}}',['author_id'],false);
 
         $this->createTable('{{%blog_post_rating}}',[
             'id'=> $this->bigPrimaryKey(20)->unsigned(),
@@ -163,6 +165,12 @@ class m190121_165914_chuden_blog extends Migration
             'CASCADE', 'NO ACTION'
         );
         $this->addForeignKey(
+            'fk_blog_post_author_id',
+            '{{%blog_post}}', 'author_id',
+            '{{%user}}', 'id',
+            'CASCADE', 'NO ACTION'
+        );
+        $this->addForeignKey(
             'fk_blog_post_rating_blog_post_id',
             '{{%blog_post_rating}}', 'blog_post_id',
             '{{%blog_post}}', 'id',
@@ -199,6 +207,7 @@ class m190121_165914_chuden_blog extends Migration
             $this->dropForeignKey('fk_blog_comment_like_user_id', '{{%blog_comment_like}}');
             $this->dropForeignKey('fk_blog_post_blog_category_id', '{{%blog_post}}');
             $this->dropForeignKey('fk_blog_post_language_id', '{{%blog_post}}');
+            $this->dropForeignKey('fk_blog_post_author_id', '{{%blog_post}}');
             $this->dropForeignKey('fk_blog_post_rating_blog_post_id', '{{%blog_post_rating}}');
             $this->dropForeignKey('fk_blog_post_rating_user_id', '{{%blog_post_rating}}');
             $this->dropForeignKey('fk_blog_subscription_language_id', '{{%blog_subscription}}');
