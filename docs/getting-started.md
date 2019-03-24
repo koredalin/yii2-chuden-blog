@@ -5,20 +5,26 @@ Please, use PHP5.6 or PHP7.0 and MySql database server.
 A simple way for starting the blog is with an XAMPP.
 
 ### 1. Download
-Yii2-chuden-blog can be installed using composer. Run following command to download and
-install Yii2-chuden-blog:
+Gihub source: https://github.com/koredalin/yii2-chuden-blog.git. Yii2-chuden-blog can be installed using composer.
+
+1.) Make localhost/yii2-chuden-blog folder and go to it.
+2.) Clone and install the vendor folder.
 
 ```bash
-https://github.com/koredalin/yii2-chuden-blog.git
+# Clone **Chuden blog**.
+$ git clone https://github.com/koredalin/yii2-chuden-blog.git
+# Make Composer self-update.
+$ composer self-update
+# Download-install vendor folder.
+$ composer install
 ```
 
 ### 2. Configure
-> **NOTE:** Please, install the blog with default config.php file.
-After you start the blog - you can update it at any time.
+> **NOTE:** Please, install the blog with default config.php file. After you start the blog - you can update it at any time.
 
 ### 3. Update database schema
 The last thing you need to do is updating your database schema by applying the
-migrations. Please, make an empty database with name "chuden-blog" with a collation: "utf8_general_ci" (for preference). Make sure that you have properly configured `db` application component
+migrations. File: /config/db.php. Please, make an empty database with name "chuden-blog" with a collation: "utf8_general_ci" (for preference). Make sure that you have properly configured `db` application component
 and run the following command:
 
 ```bash
